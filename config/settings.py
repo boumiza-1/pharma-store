@@ -81,7 +81,7 @@ DATABASES = {
         'NAME': 'pharma_db',
         'USER': 'postgres',
         'PASSWORD': 'soussa1925',
-        'HOST': '127.0.0.1',
+        'HOST': 'host.docker.internal',
         'PORT': '5433',
     }
 }
