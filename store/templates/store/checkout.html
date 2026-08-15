@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Finaliser ma commande</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f7fa;
+            margin: 0;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .checkout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        .box {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 7px;
+            font-weight: bold;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
+        .item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .total {
+            display: flex;
+            justify-content: space-between;
+            font-size: 22px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        .btn {
+            width: 100%;
+            border: none;
+            background: #198754;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 17px;
+            cursor: pointer;
+            margin-top: 25px;
+        }
+
+        .btn:hover {
+            background: #157347;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #842029;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .back {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #333;
+            text-decoration: none;
+        }
+
+        @media (max-width: 700px) {
+            .checkout {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <a href="{% url 'cart' %}" class="back">
+        ← Retour au panier
+    </a>
+
+    <h1>Finaliser ma commande</h1>
+
+    <div class="checkout">
+
+        <!-- FORMULAIRE CLIENT -->
+
+        <div class="box">
+
+            <h2>Informations de livraison</h2>
+
+            {% if error %}
+                <div class="error">
+                    {{ error }}
+                </div>
+            {% endif %}
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+                <label for="customer_name">
+                    Nom complet
+                </label>
+
+                <input
+                    type="text"
+                    id="customer_name"
+                    name="customer_name"
+                    placeholder="Votre nom complet"
+                    required
+                >
+
+                <label for="phone">
+                    Téléphone
+                </label>
+
+                <input
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    placeholder="Votre numéro de téléphone"
+                    required
+                >
+
+                <label for="address">
+                    Adresse de livraison
+                </label>
+
+                <textarea
+                    id="address"
+                    name="address"
+                    placeholder="Votre adresse complète"
+                    required
+                ></textarea>
+
+                <label for="city">
+                    Ville
+                </label>
+
+                <input
+                    type="text"
+                    id="city"
+                    name="city"
+                    placeholder="Votre ville"
+                    required
+                >
+
+                <button type="submit" class="btn">
+                    ✅ Confirmer la commande
+                </button>
+
+            </form>
+
+        </div>
+
+
+        <!-- RESUME COMMANDE -->
+
+        <div class="box">
+
+            <h2>Résumé de la commande</h2>
+
+            {% for item in cart_items %}
+
+                <div class="item">
+
+                    <div>
+                        <strong>
+                            {{ item.product.name }}
+                        </strong>
+
+                        <br>
+
+                        Quantité :
+                        {{ item.quantity }}
+                    </div>
+
+                    <div>
+                        {{ item.subtotal }} DT
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+            <div class="total">
+
+                <span>Total</span>
+
+                <span>
+                    {{ total }} DT
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

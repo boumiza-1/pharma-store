@@ -1,0 +1,243 @@
+
+{% extends "store/base.html" %}
+
+{% block title %}
+Catégories | Pharma Store
+{% endblock %}
+
+{% block extra_css %}
+
+<style>
+
+    .categories-page {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .categories-header {
+        background: linear-gradient(135deg, #2563eb, #0f4acb);
+        color: white;
+        border-radius: 20px;
+        padding: 40px;
+        margin-bottom: 30px;
+    }
+
+    .categories-header h1 {
+        font-size: 38px;
+        margin-bottom: 10px;
+    }
+
+    .categories-header p {
+        color: rgba(255,255,255,.9);
+        line-height: 1.7;
+        max-width: 650px;
+    }
+
+    .categories-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 18px;
+    }
+
+    .category-card {
+        position: relative;
+        display: block;
+
+        padding: 25px;
+        background: white;
+
+        border: 1px solid #e5e7eb;
+        border-radius: 16px;
+
+        transition: .2s ease;
+    }
+
+    .category-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 25px rgba(15,23,42,.08);
+        border-color: #dbeafe;
+    }
+
+    .category-icon {
+        width: 58px;
+        height: 58px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 14px;
+        background: #eff6ff;
+
+        font-size: 28px;
+
+        margin-bottom: 18px;
+    }
+
+    .category-card h2 {
+        margin: 0 0 8px;
+
+        color: #111827;
+        font-size: 19px;
+    }
+
+    .category-card p {
+        margin: 0;
+
+        color: #6b7280;
+
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    .category-link {
+        display: inline-block;
+
+        margin-top: 18px;
+
+        color: #2563eb;
+
+        font-size: 13px;
+        font-weight: 800;
+    }
+
+    .empty-categories {
+        background: white;
+        padding: 60px 25px;
+
+        text-align: center;
+
+        border: 1px solid #e5e7eb;
+        border-radius: 16px;
+    }
+
+    .empty-categories-icon {
+        font-size: 50px;
+        margin-bottom: 12px;
+    }
+
+    .empty-categories h2 {
+        color: #111827;
+        margin-bottom: 8px;
+    }
+
+    .empty-categories p {
+        color: #6b7280;
+    }
+
+    @media (max-width: 1000px) {
+        .categories-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 750px) {
+        .categories-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 500px) {
+        .categories-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .categories-header {
+            padding: 30px 22px;
+        }
+
+        .categories-header h1 {
+            font-size: 30px;
+        }
+    }
+
+</style>
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="categories-page">
+
+    <!-- HEADER -->
+
+    <section class="categories-header">
+
+        <h1>
+            📂 Nos catégories
+        </h1>
+
+        <p>
+            Découvrez nos différentes catégories de produits
+            et trouvez rapidement ce dont vous avez besoin.
+        </p>
+
+    </section>
+
+
+    <!-- CATEGORIES -->
+
+    <div class="categories-grid">
+
+        {% for category in categories %}
+
+            <a
+                href="{% url 'product_list' %}?category={{ category.id }}"
+                class="category-card"
+            >
+
+                <div class="category-icon">
+                    💊
+                </div>
+
+                <h2>
+                    {{ category.name }}
+                </h2>
+
+                {% if category.description %}
+
+                    <p>
+                        {{ category.description|truncatechars:110 }}
+                    </p>
+
+                {% else %}
+
+                    <p>
+                        Découvrez les produits de cette catégorie.
+                    </p>
+
+                {% endif %}
+
+                <span class="category-link">
+                    Voir les produits →
+                </span>
+
+            </a>
+
+        {% empty %}
+
+            <div class="empty-categories">
+
+                <div class="empty-categories-icon">
+                    📂
+                </div>
+
+                <h2>
+                    Aucune catégorie disponible
+                </h2>
+
+                <p>
+                    Ajoutez des catégories depuis Django Admin.
+                </p>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endblock %}
+```

@@ -1,0 +1,135 @@
+{% extends "store/base.html" %}
+
+{% block title %}Créer un compte{% endblock %}
+
+{% block content %}
+
+<div style="max-width: 500px; margin: 40px auto;">
+
+    <div style="
+        background: white;
+        padding: 35px;
+        border-radius: 15px;
+        box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+    ">
+
+        <h1 style="margin-bottom: 10px;">
+            Créer un compte
+        </h1>
+
+        <p style="color: #6b7280; margin-bottom: 25px;">
+            Créez votre compte pour suivre vos commandes.
+        </p>
+
+        {% if error %}
+            <div style="
+                background: #f8d7da;
+                color: #842029;
+                padding: 12px;
+                border-radius: 8px;
+                margin-bottom: 20px;
+            ">
+                {{ error }}
+            </div>
+        {% endif %}
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            <label>Nom d'utilisateur</label>
+
+            <input
+                type="text"
+                name="username"
+                required
+                style="
+                    width: 100%;
+                    padding: 12px;
+                    margin: 8px 0 15px;
+                    border: 1px solid #ddd;
+                    border-radius: 8px;
+                "
+            >
+
+            <label>Email</label>
+
+            <input
+                type="email"
+                name="email"
+                required
+                style="
+                    width: 100%;
+                    padding: 12px;
+                    margin: 8px 0 15px;
+                    border: 1px solid #ddd;
+                    border-radius: 8px;
+                "
+            >
+
+            <label>Mot de passe</label>
+
+            <input
+                type="password"
+                name="password"
+                required
+                style="
+                    width: 100%;
+                    padding: 12px;
+                    margin: 8px 0 15px;
+                    border: 1px solid #ddd;
+                    border-radius: 8px;
+                "
+            >
+
+            <label>Confirmer le mot de passe</label>
+
+            <input
+                type="password"
+                name="password2"
+                required
+                style="
+                    width: 100%;
+                    padding: 12px;
+                    margin: 8px 0 20px;
+                    border: 1px solid #ddd;
+                    border-radius: 8px;
+                "
+            >
+
+            <button
+                type="submit"
+                style="
+                    width: 100%;
+                    padding: 14px;
+                    background: #0d6efd;
+                    color: white;
+                    border: none;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    font-size: 16px;
+                "
+            >
+                Créer mon compte
+            </button>
+
+        </form>
+
+        <p style="margin-top: 20px; text-align: center;">
+
+            Vous avez déjà un compte ?
+
+            <a
+                href="{% url 'login' %}"
+                style="color: #0d6efd;"
+            >
+                Se connecter
+            </a>
+
+        </p>
+
+    </div>
+
+</div>
+
+{% endblock %}

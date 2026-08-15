@@ -1,0 +1,659 @@
+```html
+{% extends "store/base.html" %}
+
+{% block title %}Produits | Pharma Store{% endblock %}
+
+{% block extra_css %}
+
+<style>
+
+    .market-page {
+        max-width: 1280px;
+        margin: 0 auto;
+    }
+
+    /* HEADER */
+    .market-header {
+        background: #ffffff;
+        border-radius: 16px;
+        padding: 22px 24px;
+        margin-bottom: 20px;
+        border: 1px solid #eeeeee;
+    }
+
+    .market-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 18px;
+    }
+
+    .market-title {
+        font-size: 28px;
+        font-weight: 800;
+        color: #222222;
+    }
+
+    .market-subtitle {
+        color: #777777;
+        font-size: 14px;
+        margin-top: 5px;
+    }
+
+    .sort-box {
+        padding: 10px 14px;
+        border: 1px solid #dddddd;
+        border-radius: 10px;
+        background: white;
+        color: #444444;
+        font-size: 13px;
+    }
+
+    /* CATEGORY CHIPS */
+    .chips {
+        display: flex;
+        gap: 10px;
+        overflow-x: auto;
+        padding-bottom: 3px;
+    }
+
+    .chip {
+        flex-shrink: 0;
+        padding: 9px 15px;
+        border-radius: 999px;
+        background: #f5f5f5;
+        color: #444444;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .chip.active {
+        background: #111111;
+        color: #ffffff;
+    }
+
+    /* GRID */
+    .market-grid {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    /* CARD */
+    .market-card {
+        position: relative;
+        background: #ffffff;
+        border-radius: 14px;
+        overflow: hidden;
+        border: 1px solid #eeeeee;
+        transition: .2s ease;
+    }
+
+    .market-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 28px rgba(0,0,0,.08);
+    }
+
+    /* HEART */
+    .heart-btn {
+        position: absolute;
+        z-index: 5;
+        top: 10px;
+        right: 10px;
+
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+
+        background: rgba(255,255,255,.95);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        font-size: 17px;
+        color: #444444;
+        box-shadow: 0 2px 8px rgba(0,0,0,.08);
+    }
+
+    /* IMAGE */
+    .market-image {
+        position: relative;
+        height: 245px;
+        background: #f7f7f7;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 14px;
+    }
+
+    .market-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        transition: .25s ease;
+    }
+
+    .market-card:hover .market-image img {
+        transform: scale(1.04);
+    }
+
+    .no-image {
+        color: #aaaaaa;
+        text-align: center;
+    }
+
+    .no-image-icon {
+        font-size: 45px;
+        margin-bottom: 5px;
+    }
+
+    /* BADGES */
+    .discount-badge {
+        position: absolute;
+        bottom: 10px;
+        left: 10px;
+
+        background: #ff4d22;
+        color: white;
+
+        padding: 5px 8px;
+        border-radius: 6px;
+
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+    .stock-badge {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+
+        padding: 5px 8px;
+        border-radius: 6px;
+
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .stock-ok {
+        background: #eaffef;
+        color: #149447;
+    }
+
+    .stock-out {
+        background: #ffe7e7;
+        color: #d93025;
+    }
+
+    /* INFO */
+    .market-info {
+        padding: 12px 13px 14px;
+    }
+
+    .market-category {
+        color: #888888;
+        font-size: 11px;
+        margin-bottom: 5px;
+    }
+
+    .market-name {
+        color: #222222;
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 1.4;
+
+        height: 40px;
+
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .rating-row {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        margin-top: 7px;
+        margin-bottom: 5px;
+        font-size: 12px;
+    }
+
+    .stars {
+        color: #f5a623;
+        letter-spacing: 1px;
+    }
+
+    .sold {
+        color: #888888;
+    }
+
+    .price-row {
+        display: flex;
+        align-items: baseline;
+        gap: 6px;
+        margin-top: 6px;
+    }
+
+    .price {
+        color: #111111;
+        font-size: 23px;
+        font-weight: 900;
+    }
+
+    .currency {
+        color: #555555;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .delivery {
+        margin-top: 5px;
+        color: #149447;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    /* ACTION */
+    .market-action {
+        display: grid;
+        grid-template-columns: 1fr 1.25fr;
+        gap: 7px;
+        margin-top: 12px;
+    }
+
+    .view-btn,
+    .cart-btn-market {
+        min-height: 39px;
+        border-radius: 8px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    .view-btn {
+        background: #f4f4f4;
+        color: #333333;
+    }
+
+    .view-btn:hover {
+        background: #e9e9e9;
+    }
+
+    .cart-btn-market {
+        background: #111111;
+        color: white;
+    }
+
+    .cart-btn-market:hover {
+        background: #2a2a2a;
+    }
+
+    .disabled-btn {
+        grid-column: 1 / -1;
+        min-height: 39px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 8px;
+        background: #eeeeee;
+        color: #999999;
+
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    /* EMPTY */
+    .empty-market {
+        grid-column: 1 / -1;
+        background: white;
+        border-radius: 16px;
+        padding: 70px 25px;
+        text-align: center;
+        border: 1px solid #eeeeee;
+    }
+
+    .empty-market-icon {
+        font-size: 55px;
+        margin-bottom: 12px;
+    }
+
+    .empty-market h2 {
+        color: #222222;
+        margin-bottom: 8px;
+    }
+
+    .empty-market p {
+        color: #888888;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 1200px) {
+        .market-grid {
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 950px) {
+        .market-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 700px) {
+        .market-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .market-top {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .market-image {
+            height: 210px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .market-grid {
+            grid-template-columns: 1fr 1fr;
+            gap: 9px;
+        }
+
+        .market-image {
+            height: 175px;
+        }
+
+        .market-info {
+            padding: 10px;
+        }
+
+        .market-name {
+            font-size: 13px;
+        }
+
+        .price {
+            font-size: 20px;
+        }
+
+        .market-action {
+            grid-template-columns: 1fr;
+        }
+    }
+
+</style>
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="market-page">
+
+    <!-- HEADER -->
+
+    <div class="market-header">
+
+        <div class="market-top">
+
+            <div>
+
+                <div class="market-title">
+                    Tous les produits
+                </div>
+
+                <div class="market-subtitle">
+                    Découvrez nos produits disponibles
+                </div>
+
+            </div>
+
+            <div class="sort-box">
+                {{ products|length }} produits
+            </div>
+
+        </div>
+
+
+        <!-- SEARCH RESULT -->
+
+        {% if request.GET.search %}
+
+            <div style="
+                margin-bottom: 15px;
+                color: #666;
+                font-size: 13px;
+            ">
+
+                🔎 Recherche :
+                <strong>
+                    "{{ request.GET.search }}"
+                </strong>
+
+            </div>
+
+        {% endif %}
+
+
+        <!-- CATEGORY CHIPS -->
+
+        <div class="chips">
+
+            <a
+                href="{% url 'product_list' %}"
+                class="chip active"
+            >
+                Tous
+            </a>
+
+            {% for category in categories %}
+
+                <a
+                    href="{% url 'product_list' %}?category={{ category.id }}"
+                    class="chip"
+                >
+                    {{ category.name }}
+                </a>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+
+    <!-- PRODUCTS -->
+
+    <div class="market-grid">
+
+        {% for product in products %}
+
+            <article class="market-card">
+
+                <!-- HEART -->
+
+                <div class="heart-btn">
+                    ♡
+                </div>
+
+
+                <!-- IMAGE -->
+
+                <div class="market-image">
+
+                    {% if product.quantity > 0 %}
+
+                        <span class="stock-badge stock-ok">
+                            En stock
+                        </span>
+
+                    {% else %}
+
+                        <span class="stock-badge stock-out">
+                            Rupture
+                        </span>
+
+                    {% endif %}
+
+
+                    {% if product.image %}
+
+                        <img
+                            src="{{ product.image.url }}"
+                            alt="{{ product.name }}"
+                        >
+
+                    {% else %}
+
+                        <div class="no-image">
+
+                            <div class="no-image-icon">
+                                💊
+                            </div>
+
+                            Pas d'image
+
+                        </div>
+
+                    {% endif %}
+
+
+                    {% if product.quantity > 0 %}
+
+                        <span class="discount-badge">
+                            BON PRIX
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- INFO -->
+
+                <div class="market-info">
+
+                    {% if product.category %}
+
+                        <div class="market-category">
+                            {{ product.category.name }}
+                        </div>
+
+                    {% endif %}
+
+
+                    <div class="market-name">
+                        {{ product.name }}
+                    </div>
+
+
+                    <div class="rating-row">
+
+                        <span class="stars">
+                            ★★★★★
+                        </span>
+
+                        <span class="sold">
+                            Disponible
+                        </span>
+
+                    </div>
+
+
+                    <div class="price-row">
+
+                        <span class="price">
+                            {{ product.price }}
+                        </span>
+
+                        <span class="currency">
+                            DT
+                        </span>
+
+                    </div>
+
+
+                    {% if product.delivery %}
+
+                        <div class="delivery">
+                            🚚 {{ product.delivery }}
+                        </div>
+
+                    {% else %}
+
+                        <div class="delivery">
+                            ✓ Livraison disponible
+                        </div>
+
+                    {% endif %}
+
+
+                    <!-- ACTIONS -->
+
+                    <div class="market-action">
+
+                        <a
+                            href="{% url 'product_detail' product.id %}"
+                            class="view-btn"
+                        >
+                            Voir
+                        </a>
+
+
+                        {% if product.quantity > 0 %}
+
+                            <a
+                                href="{% url 'add_to_cart' product.id %}"
+                                class="cart-btn-market"
+                            >
+                                🛒 Ajouter
+                            </a>
+
+                        {% else %}
+
+                            <span class="disabled-btn">
+                                Indisponible
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </article>
+
+        {% empty %}
+
+            <div class="empty-market">
+
+                <div class="empty-market-icon">
+                    💊
+                </div>
+
+                <h2>
+                    Aucun produit disponible
+                </h2>
+
+                <p>
+                    Ajoutez des produits depuis Django Admin.
+                </p>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endblock %}
+```

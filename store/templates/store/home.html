@@ -1,0 +1,996 @@
+{% extends "store/base.html" %}
+
+{% block title %}
+Accueil | Pharma Store
+{% endblock %}
+
+
+{% block extra_css %}
+
+<style>
+
+    /* =====================================
+       HOME
+    ===================================== */
+
+    .home-page {
+        max-width: 1280px;
+        margin: 0 auto;
+    }
+
+
+    /* =====================================
+       HERO
+    ===================================== */
+
+    .home-hero {
+        position: relative;
+        overflow: hidden;
+
+        min-height: 360px;
+
+        display: flex;
+        align-items: center;
+
+        padding: 55px;
+
+        margin-bottom: 35px;
+
+        border-radius: 22px;
+
+        background:
+            radial-gradient(
+                circle at 85% 20%,
+                rgba(255,255,255,.18),
+                transparent 30%
+            ),
+            linear-gradient(
+                135deg,
+                #2563eb,
+                #0f4acb
+            );
+
+        color: white;
+
+        box-shadow:
+            0 15px 40px rgba(37,99,235,.18);
+    }
+
+    .hero-content {
+        max-width: 650px;
+    }
+
+    .hero-badge {
+        display: inline-flex;
+
+        padding: 8px 13px;
+
+        margin-bottom: 18px;
+
+        border-radius: 999px;
+
+        background: rgba(255,255,255,.16);
+
+        border: 1px solid rgba(255,255,255,.20);
+
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .home-hero h1 {
+        font-size: 48px;
+        line-height: 1.1;
+
+        margin-bottom: 18px;
+    }
+
+    .home-hero p {
+        max-width: 620px;
+
+        font-size: 17px;
+        line-height: 1.8;
+
+        color: rgba(255,255,255,.92);
+    }
+
+    .hero-buttons {
+        display: flex;
+        gap: 12px;
+
+        margin-top: 28px;
+
+        flex-wrap: wrap;
+    }
+
+    .hero-primary-btn,
+    .hero-secondary-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        padding: 13px 20px;
+
+        border-radius: 10px;
+
+        font-size: 14px;
+        font-weight: 800;
+    }
+
+    .hero-primary-btn {
+        background: white;
+        color: #2563eb;
+    }
+
+    .hero-secondary-btn {
+        background: rgba(255,255,255,.12);
+        color: white;
+
+        border: 1px solid rgba(255,255,255,.25);
+    }
+
+
+    /* =====================================
+       SECTIONS
+    ===================================== */
+
+    .home-section {
+        margin-bottom: 42px;
+    }
+
+    .section-header {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+
+        gap: 20px;
+
+        margin-bottom: 18px;
+    }
+
+    .section-title h2 {
+        margin: 0;
+
+        color: #111827;
+
+        font-size: 28px;
+        font-weight: 800;
+    }
+
+    .section-title p {
+        margin-top: 5px;
+
+        color: #777;
+
+        font-size: 13px;
+    }
+
+    .section-link {
+        color: #2563eb;
+
+        font-size: 13px;
+        font-weight: 800;
+    }
+
+
+    /* =====================================
+       CATEGORY CARDS
+    ===================================== */
+
+    .categories-grid {
+        display: grid;
+
+        grid-template-columns:
+            repeat(4, minmax(0, 1fr));
+
+        gap: 14px;
+    }
+
+    .category-card {
+        display: flex;
+        align-items: center;
+
+        gap: 14px;
+
+        padding: 18px;
+
+        background: white;
+
+        border: 1px solid #eeeeee;
+
+        border-radius: 14px;
+
+        transition: .2s ease;
+    }
+
+    .category-card:hover {
+        transform: translateY(-3px);
+
+        box-shadow:
+            0 10px 25px rgba(0,0,0,.07);
+
+        border-color: #dbeafe;
+    }
+
+    .category-icon {
+        width: 52px;
+        height: 52px;
+
+        flex-shrink: 0;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 13px;
+
+        background: #eff6ff;
+
+        font-size: 25px;
+    }
+
+    .category-name {
+        color: #222;
+
+        font-size: 15px;
+        font-weight: 800;
+    }
+
+    .category-description {
+        margin-top: 4px;
+
+        color: #888;
+
+        font-size: 11px;
+
+        line-height: 1.4;
+    }
+
+
+    /* =====================================
+       PRODUCT GRID
+    ===================================== */
+
+    .products-grid {
+        display: grid;
+
+        grid-template-columns:
+            repeat(5, minmax(0, 1fr));
+
+        gap: 14px;
+    }
+
+
+    /* =====================================
+       PRODUCT CARD
+    ===================================== */
+
+    .product-card {
+        position: relative;
+
+        background: white;
+
+        border: 1px solid #eeeeee;
+
+        border-radius: 14px;
+
+        overflow: hidden;
+
+        transition: .2s ease;
+    }
+
+    .product-card:hover {
+        transform: translateY(-3px);
+
+        box-shadow:
+            0 10px 28px rgba(0,0,0,.08);
+    }
+
+
+    /* =====================================
+       PRODUCT IMAGE
+    ===================================== */
+
+    .product-image-box {
+        position: relative;
+
+        height: 225px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        padding: 12px;
+
+        background: #f7f7f7;
+    }
+
+    .product-image {
+        width: 100%;
+        height: 100%;
+
+        object-fit: contain;
+    }
+
+
+    /* STOCK */
+
+    .home-stock-badge {
+        position: absolute;
+
+        top: 10px;
+        left: 10px;
+
+        z-index: 3;
+
+        padding: 5px 8px;
+
+        border-radius: 6px;
+
+        font-size: 10px;
+
+        font-weight: 800;
+    }
+
+    .home-stock-ok {
+        background: #eaffef;
+        color: #149447;
+    }
+
+    .home-stock-out {
+        background: #ffe7e7;
+        color: #d93025;
+    }
+
+
+    /* HEART */
+
+    .home-heart {
+        position: absolute;
+
+        top: 9px;
+        right: 9px;
+
+        z-index: 3;
+
+        width: 32px;
+        height: 32px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        background: white;
+
+        border-radius: 50%;
+
+        box-shadow:
+            0 2px 8px rgba(0,0,0,.08);
+
+        font-size: 17px;
+
+        color: #444;
+    }
+
+
+    /* =====================================
+       PRODUCT INFO
+    ===================================== */
+
+    .product-content {
+        padding: 13px;
+    }
+
+    .home-category {
+        margin-bottom: 5px;
+
+        color: #888;
+
+        font-size: 10px;
+
+        text-transform: uppercase;
+
+        font-weight: 700;
+    }
+
+    .product-name {
+        height: 40px;
+
+        color: #222;
+
+        font-size: 14px;
+
+        font-weight: 700;
+
+        line-height: 1.4;
+
+        display: -webkit-box;
+
+        -webkit-line-clamp: 2;
+
+        -webkit-box-orient: vertical;
+
+        overflow: hidden;
+    }
+
+
+    /* RATING */
+
+    .home-rating {
+        display: flex;
+        align-items: center;
+
+        gap: 5px;
+
+        margin-top: 6px;
+    }
+
+    .home-stars {
+        color: #f5a623;
+
+        font-size: 12px;
+
+        letter-spacing: 1px;
+    }
+
+    .home-rating-text {
+        color: #888;
+
+        font-size: 10px;
+    }
+
+
+    /* PRICE */
+
+    .home-price-row {
+        display: flex;
+        align-items: baseline;
+
+        gap: 5px;
+
+        margin-top: 7px;
+    }
+
+    .home-price {
+        color: #111;
+
+        font-size: 22px;
+
+        font-weight: 900;
+    }
+
+    .home-currency {
+        color: #555;
+
+        font-size: 11px;
+
+        font-weight: 700;
+    }
+
+
+    /* DELIVERY */
+
+    .home-delivery {
+        margin-top: 5px;
+
+        color: #149447;
+
+        font-size: 10px;
+
+        font-weight: 700;
+    }
+
+
+    /* =====================================
+       PRODUCT ACTIONS
+    ===================================== */
+
+    .home-actions {
+        display: grid;
+
+        grid-template-columns:
+            1fr 1.2fr;
+
+        gap: 7px;
+
+        margin-top: 11px;
+    }
+
+    .home-view-btn,
+    .home-cart-btn,
+    .home-disabled-btn {
+
+        min-height: 38px;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        border-radius: 8px;
+
+        font-size: 11px;
+
+        font-weight: 800;
+    }
+
+    .home-view-btn {
+        background: #f3f3f3;
+
+        color: #333;
+    }
+
+    .home-view-btn:hover {
+        background: #e9e9e9;
+    }
+
+    .home-cart-btn {
+        background: #111;
+
+        color: white;
+    }
+
+    .home-cart-btn:hover {
+        background: #252525;
+    }
+
+    .home-disabled-btn {
+        grid-column: 1 / -1;
+
+        background: #eeeeee;
+
+        color: #999;
+    }
+
+
+    /* =====================================
+       EMPTY
+    ===================================== */
+
+    .empty-state {
+        grid-column: 1 / -1;
+
+        padding: 60px 20px;
+
+        text-align: center;
+
+        background: white;
+
+        border: 1px solid #eeeeee;
+
+        border-radius: 16px;
+
+        color: #777;
+    }
+
+    .empty-state-icon {
+        font-size: 50px;
+
+        margin-bottom: 12px;
+    }
+
+
+    /* =====================================
+       RESPONSIVE
+    ===================================== */
+
+    @media (max-width: 1200px) {
+
+        .products-grid {
+            grid-template-columns:
+                repeat(4, minmax(0, 1fr));
+        }
+
+        .categories-grid {
+            grid-template-columns:
+                repeat(3, minmax(0, 1fr));
+        }
+    }
+
+
+    @media (max-width: 950px) {
+
+        .products-grid {
+            grid-template-columns:
+                repeat(3, minmax(0, 1fr));
+        }
+
+        .categories-grid {
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+        }
+
+        .home-hero h1 {
+            font-size: 40px;
+        }
+    }
+
+
+    @media (max-width: 700px) {
+
+        .products-grid {
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+        }
+
+        .home-hero {
+            padding: 40px 25px;
+        }
+
+        .home-hero h1 {
+            font-size: 32px;
+        }
+
+        .section-header {
+            align-items: flex-start;
+        }
+    }
+
+
+    @media (max-width: 480px) {
+
+        .products-grid {
+            gap: 9px;
+        }
+
+        .categories-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .product-image-box {
+            height: 175px;
+        }
+
+        .product-content {
+            padding: 10px;
+        }
+
+        .product-name {
+            font-size: 13px;
+        }
+
+        .home-price {
+            font-size: 20px;
+        }
+    }
+
+</style>
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="home-page">
+
+
+    <!-- =====================================
+         HERO
+    ===================================== -->
+
+    <section class="home-hero">
+
+        <div class="hero-content">
+
+            <div class="hero-badge">
+                💊 Votre pharmacie en ligne
+            </div>
+
+            <h1>
+                Votre santé,
+                notre priorité.
+            </h1>
+
+            <p>
+                Découvrez nos produits de santé,
+                bien-être et hygiène et commandez
+                facilement en ligne.
+            </p>
+
+            <div class="hero-buttons">
+
+                <a
+                    href="{% url 'product_list' %}"
+                    class="hero-primary-btn"
+                >
+                    Découvrir les produits →
+                </a>
+
+                <a
+                    href="{% url 'category_list' %}"
+                    class="hero-secondary-btn"
+                >
+                    📂 Voir les catégories
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================
+         CATEGORIES
+    ===================================== -->
+
+    <section class="home-section">
+
+        <div class="section-header">
+
+            <div class="section-title">
+
+                <h2>
+                    Catégories populaires
+                </h2>
+
+                <p>
+                    Trouvez rapidement ce dont vous avez besoin
+                </p>
+
+            </div>
+
+            <a
+                href="{% url 'category_list' %}"
+                class="section-link"
+            >
+                Voir toutes →
+            </a>
+
+        </div>
+
+
+        <div class="categories-grid">
+
+            {% for category in categories|slice:":4" %}
+
+                <a
+                    href="{% url 'product_list' %}?category={{ category.id }}"
+                    class="category-card"
+                >
+
+                    <div class="category-icon">
+                        💊
+                    </div>
+
+                    <div>
+
+                        <div class="category-name">
+                            {{ category.name }}
+                        </div>
+
+                        {% if category.description %}
+
+                            <div class="category-description">
+                                {{ category.description|truncatechars:55 }}
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </a>
+
+            {% empty %}
+
+                <div class="empty-state">
+                    Aucune catégorie disponible.
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================
+         RECENT PRODUCTS
+    ===================================== -->
+
+    <section class="home-section">
+
+        <div class="section-header">
+
+            <div class="section-title">
+
+                <h2>
+                    Produits populaires
+                </h2>
+
+                <p>
+                    Découvrez nos derniers produits disponibles
+                </p>
+
+            </div>
+
+            <a
+                href="{% url 'product_list' %}"
+                class="section-link"
+            >
+                Voir tous →
+            </a>
+
+        </div>
+
+
+        <div class="products-grid">
+
+            {% for product in products %}
+
+                <article class="product-card">
+
+
+                    <!-- IMAGE -->
+
+                    <div class="product-image-box">
+
+                        {% if product.quantity > 0 %}
+
+                            <span class="home-stock-badge home-stock-ok">
+                                En stock
+                            </span>
+
+                        {% else %}
+
+                            <span class="home-stock-badge home-stock-out">
+                                Rupture
+                            </span>
+
+                        {% endif %}
+
+
+                        <div class="home-heart">
+                            ♡
+                        </div>
+
+
+                        {% if product.image %}
+
+                            <img
+                                src="{{ product.image.url }}"
+                                class="product-image"
+                                alt="{{ product.name }}"
+                            >
+
+                        {% else %}
+
+                            <div style="
+                                font-size: 42px;
+                                color: #aaa;
+                            ">
+                                💊
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- INFORMATION -->
+
+                    <div class="product-content">
+
+                        {% if product.category %}
+
+                            <div class="home-category">
+                                {{ product.category.name }}
+                            </div>
+
+                        {% endif %}
+
+
+                        <div class="product-name">
+                            {{ product.name }}
+                        </div>
+
+
+                        <!-- RATING -->
+
+                        <div class="home-rating">
+
+                            <span class="home-stars">
+                                ★★★★★
+                            </span>
+
+                            <span class="home-rating-text">
+                                Avis clients
+                            </span>
+
+                        </div>
+
+
+                        <!-- PRICE -->
+
+                        <div class="home-price-row">
+
+                            <span class="home-price">
+                                {{ product.price }}
+                            </span>
+
+                            <span class="home-currency">
+                                DT
+                            </span>
+
+                        </div>
+
+
+                        <!-- DELIVERY -->
+
+                        {% if product.delivery %}
+
+                            <div class="home-delivery">
+                                🚚 {{ product.delivery }}
+                            </div>
+
+                        {% else %}
+
+                            <div class="home-delivery">
+                                ✓ Livraison disponible
+                            </div>
+
+                        {% endif %}
+
+
+                        <!-- ACTIONS -->
+
+                        <div class="home-actions">
+
+                            <a
+                                href="{% url 'product_detail' product.id %}"
+                                class="home-view-btn"
+                            >
+                                Voir
+                            </a>
+
+
+                            {% if product.quantity > 0 %}
+
+                                <a
+                                    href="{% url 'add_to_cart' product.id %}"
+                                    class="home-cart-btn"
+                                >
+                                    🛒 Ajouter
+                                </a>
+
+                            {% else %}
+
+                                <span class="home-disabled-btn">
+                                    Indisponible
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+            {% empty %}
+
+                <div class="empty-state">
+
+                    <div class="empty-state-icon">
+                        💊
+                    </div>
+
+                    <h3>
+                        Aucun produit disponible
+                    </h3>
+
+                    <p>
+                        Ajoutez des produits depuis Django Admin.
+                    </p>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+</div>
+
+{% endblock %}

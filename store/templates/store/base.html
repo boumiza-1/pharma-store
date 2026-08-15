@@ -1,0 +1,505 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}Pharma Store{% endblock %}</title>
+
+    <style>
+        .messenger-float {
+    position: fixed;
+
+    right: 22px;
+    bottom: 22px;
+
+    width: 58px;
+    height: 58px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #0084ff;
+    color: white;
+
+    font-size: 27px;
+
+    box-shadow: 0 8px 25px rgba(0,0,0,.20);
+
+    z-index: 9999;
+
+    transition: .2s ease;
+}
+
+.messenger-float:hover {
+    transform: translateY(-3px) scale(1.05);
+}
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f5f7fa;
+            color: #1f2937;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .navbar {
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1250px;
+            margin: auto;
+            min-height: 75px;
+            padding: 12px 25px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 23px;
+            font-weight: bold;
+            color: #0d6efd;
+            white-space: nowrap;
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: #0d6efd;
+            color: white;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 22px;
+        }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            list-style: none;
+        }
+
+        .nav-menu a {
+            color: #4b5563;
+            font-size: 15px;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .nav-menu a:hover {
+            color: #0d6efd;
+        }
+
+        .nav-search {
+            flex: 1;
+            max-width: 300px;
+        }
+
+        .search-box {
+            width: 100%;
+            height: 42px;
+            border: 1px solid #d1d5db;
+            border-radius: 10px;
+            padding: 0 15px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .search-box:focus {
+            border-color: #0d6efd;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 10px 14px;
+            border-radius: 9px;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+        }
+
+        .cart-btn {
+            background: #eef5ff;
+            color: #0d6efd;
+        }
+
+        .account-btn {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .login-btn {
+            background: #0d6efd;
+            color: white;
+        }
+
+        .register-btn {
+            background: #198754;
+            color: white;
+        }
+
+        .logout-btn {
+            background: #fff1f2;
+            color: #dc3545;
+            cursor: pointer;
+        }
+
+        main {
+            min-height: calc(100vh - 150px);
+        }
+
+        .page-container {
+            max-width: 1250px;
+            margin: auto;
+            padding: 35px 25px;
+        }
+
+        footer {
+            background: #111827;
+            color: #d1d5db;
+            margin-top: 50px;
+        }
+
+        .footer-container {
+            max-width: 1250px;
+            margin: auto;
+            padding: 45px 25px;
+
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 40px;
+        }
+
+        .footer-brand h2 {
+            color: white;
+            margin-bottom: 12px;
+        }
+
+        .footer-brand p {
+            line-height: 1.7;
+            font-size: 14px;
+        }
+
+        .footer-column h3 {
+            color: white;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .footer-column a {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #d1d5db;
+        }
+
+        .footer-column a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #374151;
+            text-align: center;
+            padding: 18px;
+            font-size: 13px;
+        }
+
+        @media (max-width: 950px) {
+            .nav-menu {
+                display: none;
+            }
+
+            .nav-search {
+                max-width: 250px;
+            }
+
+            .footer-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 650px) {
+            .nav-container {
+                flex-wrap: wrap;
+                padding: 15px;
+            }
+
+            .nav-search {
+                order: 3;
+                width: 100%;
+                max-width: none;
+            }
+
+            .footer-container {
+                grid-template-columns: 1fr;
+            }
+
+            .page-container {
+                padding: 25px 15px;
+            }
+        }
+    </style>
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+
+<header class="navbar">
+
+    <div class="nav-container">
+
+        <!-- LOGO -->
+        <a href="{% url 'product_list' %}" class="logo">
+            <span class="logo-icon">💊</span>
+            Pharma
+        </a>
+
+        <!-- MENU -->
+        <ul class="nav-menu">
+
+            <li>
+                <a href="{% url 'home' %}">
+    Accueil
+</a>
+            </li>
+
+            <li>
+                <a href="{% url 'product_list' %}">
+                    Produits
+                </a>
+            </li>
+
+            <li>
+                <a href="{% url 'cart' %}">
+                    Panier
+                </a>
+            </li>
+             <li>
+                <a href="{% url 'creator' %}">
+                    creator
+                </a>
+            </li>
+
+        </ul>
+
+        <!-- SEARCH -->
+        <div class="nav-search">
+
+            <form action="{% url 'product_list' %}" method="GET">
+
+                <input
+                    type="text"
+                    name="search"
+                    value="{{ request.GET.search|default:'' }}"
+                    class="search-box"
+                    placeholder="Rechercher un produit..."
+                >
+
+            </form>
+
+        </div>
+<a
+    href="https://m.me/https://www.facebook.com/Princotn1/"
+    target="_blank"
+    class="messenger-float"
+    aria-label="Contacter sur Messenger"
+>
+    💬
+</a>
+        <!-- ACTIONS -->
+        <div class="nav-actions">
+
+            <a href="{% url 'cart' %}" class="nav-btn cart-btn">
+                🛒 Panier
+            </a>
+
+            {% if user.is_authenticated %}
+
+                <a
+                    href="{% url 'my_orders' %}"
+                    class="nav-btn account-btn"
+                >
+                    📦 Mes commandes
+                </a>
+
+                <form
+                    method="POST"
+                    action="{% url 'logout' %}"
+                    style="display: inline;"
+                >
+                    {% csrf_token %}
+
+                    <button
+                        type="submit"
+                        class="nav-btn logout-btn"
+                    >
+                        🚪 Déconnexion
+                    </button>
+                </form>
+
+            {% else %}
+
+                <a
+                    href="{% url 'login' %}"
+                    class="nav-btn login-btn"
+                >
+                    👤 Se connecter
+                </a>
+
+                <a
+                    href="{% url 'register' %}"
+                    class="nav-btn register-btn"
+                >
+                    Créer un compte
+                </a>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</header>
+
+
+<main>
+
+    <div class="page-container">
+
+        {% block content %}
+        {% endblock %}
+
+    </div>
+
+</main>
+
+
+<footer>
+
+    <div class="footer-container">
+
+        <div class="footer-brand">
+
+            <h2>💊 Pharma</h2>
+
+            <p>
+                Votre pharmacie en ligne pour découvrir
+                nos produits de santé, bien-être et hygiène.
+            </p>
+
+        </div>
+
+
+        <div class="footer-column">
+
+            <h3>Navigation</h3>
+
+            <a href="{% url 'product_list' %}">
+                Accueil
+            </a>
+
+            <a href="{% url 'product_list' %}">
+                Produits
+            </a>
+
+            <a href="{% url 'cart' %}">
+                Panier
+            </a>
+
+        </div>
+
+
+        <div class="footer-column">
+
+            <h3>Mon compte</h3>
+
+            {% if user.is_authenticated %}
+
+                <a href="{% url 'my_orders' %}">
+                    Mes commandes
+                </a>
+
+            {% else %}
+
+                <a href="{% url 'login' %}">
+                    Se connecter
+                </a>
+
+                <a href="{% url 'register' %}">
+                    Créer un compte
+                </a>
+
+            {% endif %}
+
+        </div>
+
+
+        <div class="footer-column">
+
+            <h3>Contact</h3>
+
+            <a href="tel:+21696206615">
+                📞 Téléphone
+            </a>
+
+            <a href="amineboumiza2011@gmail.com">
+                📧 Email
+            </a>
+
+            <a href="#">
+                📍 Tunisie
+            </a>
+
+        </div>
+
+    </div>
+
+    <div class="footer-bottom">
+        © 2026 Pharma Store — Tous droits réservés , amine boumiza.
+    </div>
+
+</footer>
+
+
+{% block extra_js %}{% endblock %}
+
+</body>
+</html>

@@ -1,0 +1,105 @@
+{% extends "store/base.html" %}
+
+{% block title %}Se connecter{% endblock %}
+
+{% block content %}
+
+<div style="max-width: 500px; margin: 40px auto;">
+
+    <div style="
+        background: white;
+        padding: 35px;
+        border-radius: 15px;
+        box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+    ">
+
+        <h1 style="margin-bottom: 10px;">
+            Se connecter
+        </h1>
+
+        <p style="color: #6b7280; margin-bottom: 25px;">
+            Connectez-vous à votre compte.
+        </p>
+
+        {% if error %}
+            <div style="
+                background: #f8d7da;
+                color: #842029;
+                padding: 12px;
+                border-radius: 8px;
+                margin-bottom: 20px;
+            ">
+                {{ error }}
+            </div>
+        {% endif %}
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            <label>Nom d'utilisateur</label>
+
+            <input
+                type="text"
+                name="username"
+                required
+                style="
+                    width: 100%;
+                    padding: 12px;
+                    margin: 8px 0 15px;
+                    border: 1px solid #ddd;
+                    border-radius: 8px;
+                "
+            >
+
+            <label>Mot de passe</label>
+
+            <input
+                type="password"
+                name="password"
+                required
+                style="
+                    width: 100%;
+                    padding: 12px;
+                    margin: 8px 0 20px;
+                    border: 1px solid #ddd;
+                    border-radius: 8px;
+                "
+            >
+
+            <button
+                type="submit"
+                style="
+                    width: 100%;
+                    padding: 14px;
+                    background: #0d6efd;
+                    color: white;
+                    border: none;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    font-size: 16px;
+                "
+            >
+                Se connecter
+            </button>
+
+        </form>
+
+        <p style="margin-top: 20px; text-align: center;">
+
+            Vous n'avez pas encore de compte ?
+
+            <a
+                href="{% url 'register' %}"
+                style="color: #0d6efd;"
+            >
+                Créer un compte
+            </a>
+
+        </p>
+
+    </div>
+
+</div>
+
+{% endblock %}

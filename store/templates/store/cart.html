@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Mon panier</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f7fa;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+
+        h1 {
+            margin-bottom: 30px;
+        }
+
+        .cart-item {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            background: white;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 12px;
+        }
+
+        .cart-item img {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+        }
+
+        .info {
+            flex: 1;
+        }
+
+        .price {
+            font-weight: bold;
+        }
+
+        .remove {
+            color: red;
+            text-decoration: none;
+        }
+
+        .total {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: right;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .btn {
+            display: inline-block;
+            background: #198754;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            text-decoration: none;
+            margin-top: 20px;
+        }
+
+        .back {
+            color: #333;
+            text-decoration: none;
+        }
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <a href="{% url 'product_list' %}" class="back">
+        ← Continuer mes achats
+    </a>
+
+    <h1>🛒 Mon panier</h1>
+
+    {% if cart_items %}
+
+        {% for item in cart_items %}
+
+            <div class="cart-item">
+
+                {% if item.product.image %}
+
+                    <img
+                        src="{{ item.product.image.url }}"
+                        alt="{{ item.product.name }}"
+                    >
+
+                {% endif %}
+
+                <div class="info">
+
+                    <h2>
+                        {{ item.product.name }}
+                    </h2>
+
+                    <p>
+                        Prix unitaire :
+                        {{ item.product.price }} DT
+                    </p>
+
+                    <p>
+                        Quantité :
+                        {{ item.quantity }}
+                    </p>
+
+                    <p class="price">
+                        Sous-total :
+                        {{ item.subtotal }} DT
+                    </p>
+
+                </div>
+
+                <a
+                    href="{% url 'remove_from_cart' item.product.id %}"
+                    class="remove"
+                >
+                    Supprimer
+                </a>
+
+            </div>
+
+        {% endfor %}
+
+        <div class="total">
+
+            Total :
+            {{ total }} DT
+
+            <br>
+<a href="{% url 'checkout' %}" class="btn">
+    🛒 Passer la commande
+</a>
+
+        </div>
+
+    {% else %}
+
+        <p>
+            Votre panier est vide.
+        </p>
+
+    {% endif %}
+
+</div>
+
+</body>
+
+</html>

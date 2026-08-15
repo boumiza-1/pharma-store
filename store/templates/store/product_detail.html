@@ -1,0 +1,773 @@
+{% extends "store/base.html" %}
+
+{% block title %}
+{{ product.name }} | Pharma Store
+{% endblock %}
+
+{% block extra_css %}
+
+<style>
+    .product-page {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .product-navigation {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+    }
+
+    .navigation-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 15px;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 700;
+        transition: 0.2s ease;
+    }
+
+    .home-btn {
+        background: #2563eb;
+        color: white;
+    }
+
+    .home-btn:hover {
+        background: #1d4ed8;
+        transform: translateY(-1px);
+    }
+
+    .products-btn {
+        background: white;
+        color: #374151;
+        border: 1px solid #e5e7eb;
+    }
+
+    .products-btn:hover {
+        background: #f8fafc;
+    }
+
+    .breadcrumb {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 7px;
+        margin-bottom: 22px;
+        color: #6b7280;
+        font-size: 13px;
+    }
+
+    .breadcrumb a {
+        color: #2563eb;
+        font-weight: 600;
+    }
+
+    .product-card-detail {
+        display: grid;
+        grid-template-columns: 1.05fr 0.95fr;
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 22px;
+        overflow: hidden;
+        box-shadow: 0 12px 35px rgba(15, 23, 42, 0.07);
+    }
+
+    .product-image-side {
+        min-height: 600px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 45px;
+        background:
+            radial-gradient(
+                circle at top left,
+                rgba(37, 99, 235, 0.08),
+                transparent 35%
+            ),
+            linear-gradient(
+                145deg,
+                #f8fbff,
+                #eef5ff
+            );
+    }
+
+    .product-image-container {
+        width: 100%;
+        max-width: 510px;
+        height: 510px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: white;
+        border-radius: 22px;
+        padding: 30px;
+        box-shadow: 0 16px 40px rgba(37, 99, 235, 0.10);
+    }
+
+    .product-image {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        transition: transform 0.3s ease;
+    }
+
+    .product-image-container:hover .product-image {
+        transform: scale(1.04);
+    }
+
+    .no-image {
+        text-align: center;
+        color: #9ca3af;
+    }
+
+    .no-image-icon {
+        font-size: 65px;
+        margin-bottom: 10px;
+    }
+
+    .product-information {
+        padding: 50px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .category-badge {
+        width: fit-content;
+        padding: 7px 12px;
+        background: #eff6ff;
+        color: #2563eb;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 800;
+        margin-bottom: 15px;
+    }
+
+    .product-name {
+        font-size: 40px;
+        line-height: 1.15;
+        color: #111827;
+        margin-bottom: 16px;
+    }
+
+    .product-description {
+        color: #6b7280;
+        font-size: 15px;
+        line-height: 1.8;
+        margin-bottom: 22px;
+    }
+
+    .product-price {
+        display: flex;
+        align-items: baseline;
+        gap: 7px;
+        margin-bottom: 20px;
+    }
+
+    .price-number {
+        font-size: 35px;
+        font-weight: 900;
+        color: #111827;
+    }
+
+    .price-currency {
+        font-size: 15px;
+        font-weight: 700;
+        color: #6b7280;
+    }
+
+    .stock-status {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 14px;
+        border-radius: 11px;
+        margin-bottom: 22px;
+    }
+
+    .stock-status.available {
+        background: #ecfdf5;
+        border: 1px solid #bbf7d0;
+        color: #15803d;
+    }
+
+    .stock-status.unavailable {
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        color: #dc2626;
+    }
+
+    .stock-circle {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: currentColor;
+        flex-shrink: 0;
+    }
+
+    .stock-small {
+        margin-top: 3px;
+        font-size: 12px;
+    }
+
+    /* QUANTITY */
+
+    .purchase-area {
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+
+    .quantity-label {
+        display: block;
+        margin-bottom: 8px;
+        color: #374151;
+        font-size: 14px;
+        font-weight: 800;
+    }
+
+    .purchase-row {
+        display: flex;
+        gap: 10px;
+        align-items: stretch;
+    }
+
+    .quantity-control {
+        display: flex;
+        align-items: center;
+        height: 52px;
+        background: #ffffff;
+        border: 1px solid #d1d5db;
+        border-radius: 11px;
+        overflow: hidden;
+    }
+
+    .quantity-btn {
+        width: 45px;
+        height: 100%;
+        border: none;
+        background: #f8fafc;
+        color: #111827;
+        font-size: 22px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.15s ease;
+    }
+
+    .quantity-btn:hover {
+        background: #eef2f7;
+    }
+
+    .quantity-input {
+        width: 55px;
+        height: 100%;
+        border: none;
+        border-left: 1px solid #e5e7eb;
+        border-right: 1px solid #e5e7eb;
+        text-align: center;
+        font-size: 16px;
+        font-weight: 800;
+        color: #111827;
+        outline: none;
+        background: white;
+    }
+
+    .add-cart-btn {
+        flex: 1;
+        min-height: 52px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        background: #111827;
+        color: white;
+        border: none;
+        border-radius: 11px;
+        font-size: 15px;
+        font-weight: 800;
+        cursor: pointer;
+        transition: 0.2s ease;
+    }
+
+    .add-cart-btn:hover {
+        background: #000000;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(17, 24, 39, 0.18);
+    }
+
+    .back-products-btn {
+        width: 52px;
+        min-height: 52px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f8fafc;
+        color: #374151;
+        border: 1px solid #e5e7eb;
+        border-radius: 11px;
+        font-size: 20px;
+    }
+
+    .back-products-btn:hover {
+        background: #eef2f7;
+    }
+
+    .unavailable-btn {
+        width: 100%;
+        min-height: 52px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #eeeeee;
+        color: #999999;
+        border-radius: 11px;
+        font-weight: 800;
+    }
+
+    .features {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        margin-top: 27px;
+    }
+
+    .feature {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        padding: 12px;
+        background: #f8fafc;
+        border: 1px solid #eef2f7;
+        border-radius: 10px;
+        color: #4b5563;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .feature-icon {
+        font-size: 17px;
+    }
+
+    .description-box {
+        margin-top: 25px;
+        padding: 25px;
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 17px;
+    }
+
+    .description-box h2 {
+        color: #111827;
+        font-size: 19px;
+        margin-bottom: 10px;
+    }
+
+    .description-box p {
+        color: #6b7280;
+        line-height: 1.8;
+    }
+
+    @media (max-width: 950px) {
+        .product-card-detail {
+            grid-template-columns: 1fr;
+        }
+
+        .product-image-side {
+            min-height: 500px;
+        }
+
+        .product-name {
+            font-size: 34px;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .product-image-side {
+            min-height: 380px;
+            padding: 22px;
+        }
+
+        .product-image-container {
+            height: 330px;
+            padding: 20px;
+        }
+
+        .product-information {
+            padding: 28px 22px;
+        }
+
+        .product-name {
+            font-size: 29px;
+        }
+
+        .price-number {
+            font-size: 29px;
+        }
+
+        .features {
+            grid-template-columns: 1fr;
+        }
+
+        .purchase-row {
+            flex-direction: column;
+        }
+
+        .quantity-control {
+            width: 100%;
+        }
+
+        .quantity-btn {
+            flex: 1;
+        }
+
+        .quantity-input {
+            flex: 1;
+        }
+
+        .back-products-btn {
+            width: 100%;
+        }
+    }
+</style>
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="product-page">
+
+    <!-- NAVIGATION -->
+
+    <div class="product-navigation">
+
+        <a
+            href="{% url 'home' %}"
+            class="navigation-btn home-btn"
+        >
+            🏠 Accueil
+        </a>
+
+        <a
+            href="{% url 'product_list' %}"
+            class="navigation-btn products-btn"
+        >
+            ← Tous les produits
+        </a>
+
+    </div>
+
+
+    <!-- BREADCRUMB -->
+
+    <div class="breadcrumb">
+
+        <a href="{% url 'home' %}">
+            Accueil
+        </a>
+
+        <span>›</span>
+
+        <a href="{% url 'product_list' %}">
+            Produits
+        </a>
+
+        <span>›</span>
+
+        <span>
+            {{ product.name }}
+        </span>
+
+    </div>
+
+
+    <!-- PRODUCT -->
+
+    <div class="product-card-detail">
+
+        <!-- IMAGE -->
+
+        <div class="product-image-side">
+
+            <div class="product-image-container">
+
+                {% if product.image %}
+
+                    <img
+                        src="{{ product.image.url }}"
+                        alt="{{ product.name }}"
+                        class="product-image"
+                    >
+
+                {% else %}
+
+                    <div class="no-image">
+
+                        <div class="no-image-icon">
+                            💊
+                        </div>
+
+                        <strong>
+                            Pas d'image disponible
+                        </strong>
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+        <!-- INFORMATION -->
+
+        <div class="product-information">
+
+            {% if product.category %}
+
+                <div class="category-badge">
+                    💊 {{ product.category.name }}
+                </div>
+
+            {% endif %}
+
+            <h1 class="product-name">
+                {{ product.name }}
+            </h1>
+
+            {% if product.description %}
+
+                <p class="product-description">
+                    {{ product.description }}
+                </p>
+
+            {% else %}
+
+                <p class="product-description">
+                    Informations produit disponibles prochainement.
+                </p>
+
+            {% endif %}
+
+
+            <!-- PRICE -->
+
+            <div class="product-price">
+
+                <span class="price-number">
+                    {{ product.price }}
+                </span>
+
+                <span class="price-currency">
+                    DT
+                </span>
+
+            </div>
+
+
+            <!-- STOCK + QUANTITY -->
+
+            {% if product.quantity > 0 %}
+
+                <div class="stock-status available">
+
+                    <span class="stock-circle"></span>
+
+                    <div>
+
+                        <strong>
+                            En stock
+                        </strong>
+
+                        <div class="stock-small">
+                            {{ product.quantity }} unité(s) disponible(s)
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="purchase-area">
+
+                    <label
+                        for="quantity"
+                        class="quantity-label"
+                    >
+                        Quantité souhaitée
+                    </label>
+
+                    <form
+                        method="POST"
+                        action="{% url 'add_to_cart' product.id %}"
+                    >
+
+                        {% csrf_token %}
+
+                        <div class="purchase-row">
+
+                            <div class="quantity-control">
+
+                                <button
+                                    type="button"
+                                    class="quantity-btn"
+                                    onclick="decreaseQuantity()"
+                                >
+                                    −
+                                </button>
+
+                                <input
+                                    type="number"
+                                    id="quantity"
+                                    name="quantity"
+                                    class="quantity-input"
+                                    value="1"
+                                    min="1"
+                                    max="{{ product.quantity }}"
+                                    readonly
+                                >
+
+                                <button
+                                    type="button"
+                                    class="quantity-btn"
+                                    onclick="increaseQuantity()"
+                                >
+                                    +
+                                </button>
+
+                            </div>
+
+
+                            <button
+                                type="submit"
+                                class="add-cart-btn"
+                            >
+                                🛒 Ajouter au panier
+                            </button>
+
+
+                            <a
+                                href="{% url 'product_list' %}"
+                                class="back-products-btn"
+                                title="Retour aux produits"
+                            >
+                                ←
+                            </a>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            {% else %}
+
+                <div class="stock-status unavailable">
+
+                    <span class="stock-circle"></span>
+
+                    <div>
+                        <strong>
+                            Rupture de stock
+                        </strong>
+                    </div>
+
+                </div>
+
+                <div class="unavailable-btn">
+                    Produit indisponible
+                </div>
+
+            {% endif %}
+
+
+            <!-- FEATURES -->
+
+            <div class="features">
+
+                <div class="feature">
+                    <span class="feature-icon">🚚</span>
+                    Livraison disponible
+                </div>
+
+                <div class="feature">
+                    <span class="feature-icon">🔒</span>
+                    Commande sécurisée
+                </div>
+
+                <div class="feature">
+                    <span class="feature-icon">📦</span>
+                    Suivi de commande
+                </div>
+
+                <div class="feature">
+                    <span class="feature-icon">✅</span>
+                    Stock mis à jour
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- DESCRIPTION -->
+
+    {% if product.description %}
+
+        <div class="description-box">
+
+            <h2>
+                Description du produit
+            </h2>
+
+            <p>
+                {{ product.description }}
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+
+<script>
+    function decreaseQuantity() {
+        const input = document.getElementById("quantity");
+
+        if (!input) {
+            return;
+        }
+
+        const current = parseInt(input.value);
+        const min = parseInt(input.min);
+
+        if (current > min) {
+            input.value = current - 1;
+        }
+    }
+
+
+    function increaseQuantity() {
+        const input = document.getElementById("quantity");
+
+        if (!input) {
+            return;
+        }
+
+        const current = parseInt(input.value);
+        const max = parseInt(input.max);
+
+        if (current < max) {
+            input.value = current + 1;
+        }
+    }
+</script>
+
+{% endblock %}

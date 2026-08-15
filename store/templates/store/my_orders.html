@@ -1,0 +1,164 @@
+{% extends "store/base.html" %}
+
+{% block title %}Mes commandes{% endblock %}
+
+{% block content %}
+
+<h1 style="margin-bottom: 30px;">
+    📦 Mes commandes
+</h1>
+
+{% if orders %}
+
+    {% for order in orders %}
+
+        <div style="
+            background: white;
+            padding: 25px;
+            margin-bottom: 20px;
+            border-radius: 15px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+        ">
+
+            <div style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 20px;
+                flex-wrap: wrap;
+            ">
+
+                <div>
+
+                    <h2 style="margin-bottom: 8px;">
+                        Commande #{{ order.id }}
+                    </h2>
+
+                    <p style="color: #6b7280;">
+                        {{ order.created_at|date:"d/m/Y H:i" }}
+                    </p>
+
+                </div>
+
+                <div style="
+                    font-weight: bold;
+                    font-size: 20px;
+                ">
+                    {{ order.total }} DT
+                </div>
+
+            </div>
+
+
+            <hr style="
+                border: none;
+                border-top: 1px solid #eee;
+                margin: 20px 0;
+            ">
+
+
+            <div>
+
+                <strong>Statut :</strong>
+
+                {% if order.status == "pending" %}
+
+                    <span style="color: #f59e0b;">
+                        🟡 En attente
+                    </span>
+
+                {% elif order.status == "preparing" %}
+
+                    <span style="color: #2563eb;">
+                        🔵 En préparation
+                    </span>
+
+                {% elif order.status == "shipping" %}
+
+                    <span style="color: #7c3aed;">
+                        🚚 En livraison
+                    </span>
+
+                {% elif order.status == "delivered" %}
+
+                    <span style="color: #198754;">
+                        ✅ Livrée
+                    </span>
+
+                {% elif order.status == "cancelled" %}
+
+                    <span style="color: #dc3545;">
+                        ❌ Annulée
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+
+            <div style="margin-top: 20px;">
+
+                <strong>Produits :</strong>
+
+                {% for item in order.items.all %}
+
+                    <div style="
+                        display: flex;
+                        justify-content: space-between;
+                        padding: 8px 0;
+                    ">
+
+                        <span>
+                            {{ item.product.name }}
+                            × {{ item.quantity }}
+                        </span>
+
+                        <span>
+                            {{ item.price }} DT
+                        </span>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+    {% endfor %}
+
+{% else %}
+
+    <div style="
+        background: white;
+        padding: 40px;
+        text-align: center;
+        border-radius: 15px;
+    ">
+
+        <h2>
+            Vous n'avez pas encore de commande.
+        </h2>
+
+        <p style="margin: 15px 0; color: #6b7280;">
+            Découvrez nos produits et passez votre première commande.
+        </p>
+
+        <a
+            href="{% url 'product_list' %}"
+            style="
+                display: inline-block;
+                padding: 13px 22px;
+                background: #0d6efd;
+                color: white;
+                border-radius: 8px;
+            "
+        >
+            Voir les produits
+        </a>
+
+    </div>
+
+{% endif %}
+
+{% endblock %}
