@@ -1,6 +1,5 @@
 
 {% extends "store/base.html" %}
-{% load static %}
 
 {% block title %}
 Accueil | Sportifano.com
@@ -22,34 +21,35 @@ Accueil | Sportifano.com
 
 
     /* =====================================
-       HERO
+       HERO / COVER
     ===================================== */
 
     .home-hero {
         position: relative;
         overflow: hidden;
 
-        min-height: 360px;
+        min-height: 420px;
 
         display: flex;
         align-items: center;
 
-        padding: 55px;
+        padding: 60px;
 
         margin-bottom: 35px;
 
         border-radius: 22px;
 
-        background:
+        background-image:
             linear-gradient(
-                rgba(0, 0, 0, 0.35),
-                rgba(0, 0, 0, 0.35)
+                90deg,
+                rgba(0,0,0,.72),
+                rgba(0,0,0,.42),
+                rgba(0,0,0,.12)
             ),
-            url("{% static 'images/sportifano.png' %}");
+            url("YOUR_COVER_IMAGE_URL");
 
         background-size: cover;
         background-position: center;
-        background-repeat: no-repeat;
 
         color: white;
 
@@ -59,11 +59,10 @@ Accueil | Sportifano.com
 
 
     .hero-content {
-        max-width: 650px;
-
         position: relative;
-
         z-index: 2;
+
+        max-width: 650px;
     }
 
 
@@ -76,33 +75,38 @@ Accueil | Sportifano.com
 
         border-radius: 999px;
 
-        background: rgba(255,255,255,.16);
+        background: rgba(255,255,255,.14);
 
         border: 1px solid rgba(255,255,255,.25);
 
-        font-size: 13px;
+        backdrop-filter: blur(5px);
 
+        font-size: 13px;
         font-weight: 700;
     }
 
 
     .home-hero h1 {
-        font-size: 48px;
+        margin: 0 0 18px;
 
-        line-height: 1.1;
+        font-size: 52px;
+        line-height: 1.08;
 
-        margin-bottom: 18px;
+        font-weight: 900;
+
+        letter-spacing: -1px;
     }
 
 
     .home-hero p {
         max-width: 620px;
 
-        font-size: 17px;
+        margin: 0;
 
+        font-size: 17px;
         line-height: 1.8;
 
-        color: rgba(255,255,255,.95);
+        color: rgba(255,255,255,.92);
     }
 
 
@@ -119,11 +123,9 @@ Accueil | Sportifano.com
 
     .hero-primary-btn,
     .hero-secondary-btn {
-
         display: inline-flex;
 
         align-items: center;
-
         justify-content: center;
 
         padding: 13px 20px;
@@ -131,15 +133,13 @@ Accueil | Sportifano.com
         border-radius: 10px;
 
         font-size: 14px;
-
         font-weight: 800;
 
-        text-decoration: none;
+        transition: .2s ease;
     }
 
 
     .hero-primary-btn {
-
         background: white;
 
         color: #111;
@@ -147,6 +147,7 @@ Accueil | Sportifano.com
 
 
     .hero-primary-btn:hover {
+        transform: translateY(-2px);
 
         background: #f3f3f3;
 
@@ -155,18 +156,18 @@ Accueil | Sportifano.com
 
 
     .hero-secondary-btn {
-
         background: rgba(255,255,255,.12);
 
         color: white;
 
-        border: 1px solid rgba(255,255,255,.25);
+        border: 1px solid rgba(255,255,255,.35);
+
+        backdrop-filter: blur(5px);
     }
 
 
     .hero-secondary-btn:hover {
-
-        background: rgba(255,255,255,.20);
+        background: rgba(255,255,255,.22);
 
         color: white;
     }
@@ -182,11 +183,9 @@ Accueil | Sportifano.com
 
 
     .section-header {
-
         display: flex;
 
         align-items: flex-end;
-
         justify-content: space-between;
 
         gap: 20px;
@@ -196,7 +195,6 @@ Accueil | Sportifano.com
 
 
     .section-title h2 {
-
         margin: 0;
 
         color: #111827;
@@ -208,7 +206,6 @@ Accueil | Sportifano.com
 
 
     .section-title p {
-
         margin-top: 5px;
 
         color: #777;
@@ -218,20 +215,11 @@ Accueil | Sportifano.com
 
 
     .section-link {
-
         color: #2563eb;
 
         font-size: 13px;
 
         font-weight: 800;
-
-        text-decoration: none;
-    }
-
-
-    .section-link:hover {
-
-        color: #1d4ed8;
     }
 
 
@@ -240,7 +228,6 @@ Accueil | Sportifano.com
     ===================================== */
 
     .categories-grid {
-
         display: grid;
 
         grid-template-columns:
@@ -251,7 +238,6 @@ Accueil | Sportifano.com
 
 
     .category-card {
-
         display: flex;
 
         align-items: center;
@@ -267,13 +253,10 @@ Accueil | Sportifano.com
         border-radius: 14px;
 
         transition: .2s ease;
-
-        text-decoration: none;
     }
 
 
     .category-card:hover {
-
         transform: translateY(-3px);
 
         box-shadow:
@@ -284,9 +267,7 @@ Accueil | Sportifano.com
 
 
     .category-icon {
-
         width: 52px;
-
         height: 52px;
 
         flex-shrink: 0;
@@ -294,7 +275,6 @@ Accueil | Sportifano.com
         display: flex;
 
         align-items: center;
-
         justify-content: center;
 
         border-radius: 13px;
@@ -306,7 +286,6 @@ Accueil | Sportifano.com
 
 
     .category-name {
-
         color: #222;
 
         font-size: 15px;
@@ -316,7 +295,6 @@ Accueil | Sportifano.com
 
 
     .category-description {
-
         margin-top: 4px;
 
         color: #888;
@@ -332,7 +310,6 @@ Accueil | Sportifano.com
     ===================================== */
 
     .products-grid {
-
         display: grid;
 
         grid-template-columns:
@@ -347,7 +324,6 @@ Accueil | Sportifano.com
     ===================================== */
 
     .product-card {
-
         position: relative;
 
         background: white;
@@ -363,7 +339,6 @@ Accueil | Sportifano.com
 
 
     .product-card:hover {
-
         transform: translateY(-3px);
 
         box-shadow:
@@ -376,7 +351,6 @@ Accueil | Sportifano.com
     ===================================== */
 
     .product-image-box {
-
         position: relative;
 
         height: 225px;
@@ -384,7 +358,6 @@ Accueil | Sportifano.com
         display: flex;
 
         align-items: center;
-
         justify-content: center;
 
         padding: 12px;
@@ -394,9 +367,7 @@ Accueil | Sportifano.com
 
 
     .product-image {
-
         width: 100%;
-
         height: 100%;
 
         object-fit: contain;
@@ -408,11 +379,9 @@ Accueil | Sportifano.com
     ===================================== */
 
     .home-stock-badge {
-
         position: absolute;
 
         top: 10px;
-
         left: 10px;
 
         z-index: 3;
@@ -428,7 +397,6 @@ Accueil | Sportifano.com
 
 
     .home-stock-ok {
-
         background: #eaffef;
 
         color: #149447;
@@ -436,7 +404,6 @@ Accueil | Sportifano.com
 
 
     .home-stock-out {
-
         background: #ffe7e7;
 
         color: #d93025;
@@ -448,23 +415,19 @@ Accueil | Sportifano.com
     ===================================== */
 
     .home-heart {
-
         position: absolute;
 
         top: 9px;
-
         right: 9px;
 
         z-index: 3;
 
         width: 32px;
-
         height: 32px;
 
         display: flex;
 
         align-items: center;
-
         justify-content: center;
 
         background: white;
@@ -485,13 +448,11 @@ Accueil | Sportifano.com
     ===================================== */
 
     .product-content {
-
         padding: 13px;
     }
 
 
     .home-category {
-
         margin-bottom: 5px;
 
         color: #888;
@@ -505,7 +466,6 @@ Accueil | Sportifano.com
 
 
     .product-name {
-
         height: 40px;
 
         color: #222;
@@ -527,12 +487,10 @@ Accueil | Sportifano.com
 
 
     /* =====================================
-       PRODUCT VARIANTS
-       TAILLE / POINTURE / COULEUR...
+       VARIANTS
     ===================================== */
 
     .product-variants {
-
         display: flex;
 
         flex-wrap: wrap;
@@ -546,7 +504,6 @@ Accueil | Sportifano.com
 
 
     .variant-badge {
-
         display: inline-flex;
 
         align-items: center;
@@ -574,7 +531,6 @@ Accueil | Sportifano.com
     ===================================== */
 
     .home-rating {
-
         display: flex;
 
         align-items: center;
@@ -586,7 +542,6 @@ Accueil | Sportifano.com
 
 
     .home-stars {
-
         color: #f5a623;
 
         font-size: 12px;
@@ -596,7 +551,6 @@ Accueil | Sportifano.com
 
 
     .home-rating-text {
-
         color: #888;
 
         font-size: 10px;
@@ -608,7 +562,6 @@ Accueil | Sportifano.com
     ===================================== */
 
     .home-price-row {
-
         display: flex;
 
         align-items: baseline;
@@ -620,7 +573,6 @@ Accueil | Sportifano.com
 
 
     .home-price {
-
         color: #111;
 
         font-size: 22px;
@@ -630,7 +582,6 @@ Accueil | Sportifano.com
 
 
     .home-currency {
-
         color: #555;
 
         font-size: 11px;
@@ -644,7 +595,6 @@ Accueil | Sportifano.com
     ===================================== */
 
     .home-delivery {
-
         margin-top: 5px;
 
         color: #149447;
@@ -656,11 +606,10 @@ Accueil | Sportifano.com
 
 
     /* =====================================
-       PRODUCT ACTIONS
+       ACTIONS
     ===================================== */
 
     .home-actions {
-
         display: grid;
 
         grid-template-columns:
@@ -675,13 +624,11 @@ Accueil | Sportifano.com
     .home-view-btn,
     .home-cart-btn,
     .home-disabled-btn {
-
         min-height: 38px;
 
         display: flex;
 
         align-items: center;
-
         justify-content: center;
 
         border-radius: 8px;
@@ -689,13 +636,10 @@ Accueil | Sportifano.com
         font-size: 11px;
 
         font-weight: 800;
-
-        text-decoration: none;
     }
 
 
     .home-view-btn {
-
         background: #f3f3f3;
 
         color: #333;
@@ -703,15 +647,11 @@ Accueil | Sportifano.com
 
 
     .home-view-btn:hover {
-
         background: #e9e9e9;
-
-        color: #333;
     }
 
 
     .home-cart-btn {
-
         background: #111;
 
         color: white;
@@ -719,15 +659,11 @@ Accueil | Sportifano.com
 
 
     .home-cart-btn:hover {
-
         background: #252525;
-
-        color: white;
     }
 
 
     .home-disabled-btn {
-
         grid-column: 1 / -1;
 
         background: #eeeeee;
@@ -741,7 +677,6 @@ Accueil | Sportifano.com
     ===================================== */
 
     .empty-state {
-
         grid-column: 1 / -1;
 
         padding: 60px 20px;
@@ -759,7 +694,6 @@ Accueil | Sportifano.com
 
 
     .empty-state-icon {
-
         font-size: 50px;
 
         margin-bottom: 12px;
@@ -773,14 +707,11 @@ Accueil | Sportifano.com
     @media (max-width: 1200px) {
 
         .products-grid {
-
             grid-template-columns:
                 repeat(4, minmax(0, 1fr));
         }
 
-
         .categories-grid {
-
             grid-template-columns:
                 repeat(3, minmax(0, 1fr));
         }
@@ -790,21 +721,16 @@ Accueil | Sportifano.com
     @media (max-width: 950px) {
 
         .products-grid {
-
             grid-template-columns:
                 repeat(3, minmax(0, 1fr));
         }
 
-
         .categories-grid {
-
             grid-template-columns:
                 repeat(2, minmax(0, 1fr));
         }
 
-
         .home-hero h1 {
-
             font-size: 40px;
         }
     }
@@ -813,30 +739,27 @@ Accueil | Sportifano.com
     @media (max-width: 700px) {
 
         .products-grid {
-
             grid-template-columns:
                 repeat(2, minmax(0, 1fr));
         }
 
-
         .home-hero {
+            min-height: 360px;
 
             padding: 40px 25px;
-
-            min-height: 330px;
 
             background-position: center;
         }
 
-
         .home-hero h1 {
-
             font-size: 32px;
         }
 
+        .home-hero p {
+            font-size: 15px;
+        }
 
         .section-header {
-
             align-items: flex-start;
         }
     }
@@ -845,46 +768,52 @@ Accueil | Sportifano.com
     @media (max-width: 480px) {
 
         .products-grid {
-
             gap: 9px;
         }
 
-
         .categories-grid {
-
             grid-template-columns: 1fr;
         }
 
-
         .product-image-box {
-
             height: 175px;
         }
 
-
         .product-content {
-
             padding: 10px;
         }
 
-
         .product-name {
-
             font-size: 13px;
         }
 
-
         .home-price {
-
             font-size: 20px;
         }
 
-
         .variant-badge {
-
             font-size: 8px;
 
             padding: 3px 6px;
+        }
+
+        .home-hero {
+            min-height: 390px;
+
+            padding: 30px 20px;
+        }
+
+        .home-hero h1 {
+            font-size: 29px;
+        }
+
+        .hero-buttons {
+            flex-direction: column;
+        }
+
+        .hero-primary-btn,
+        .hero-secondary-btn {
+            width: 100%;
         }
     }
 
@@ -899,7 +828,7 @@ Accueil | Sportifano.com
 
 
     <!-- =====================================
-         HERO
+         SPORTIFANO HERO
     ===================================== -->
 
     <section class="home-hero">
@@ -907,23 +836,20 @@ Accueil | Sportifano.com
         <div class="hero-content">
 
             <div class="hero-badge">
-                🏆 Sportifano.com
+                ⚡ SPORTIFANO — Votre boutique sportive
             </div>
 
-
             <h1>
-                Le sport,
-                notre passion.
+                Votre passion.
+                Votre style.
+                Votre sport.
             </h1>
 
-
             <p>
-                Découvrez notre sélection de produits
-                sportifs, vêtements, chaussures et
-                accessoires pour accompagner toutes
-                vos performances.
+                Découvrez notre sélection de produits sportifs,
+                vêtements, chaussures et accessoires pour donner
+                le meilleur de vous-même.
             </p>
-
 
             <div class="hero-buttons">
 
@@ -931,15 +857,14 @@ Accueil | Sportifano.com
                     href="{% url 'product_list' %}"
                     class="hero-primary-btn"
                 >
-                    Découvrir les produits →
+                    🛍️ Découvrir les produits →
                 </a>
-
 
                 <a
                     href="{% url 'category_list' %}"
                     class="hero-secondary-btn"
                 >
-                    📂 Voir les catégories
+                    ⚽ Voir les catégories
                 </a>
 
             </div>
@@ -963,13 +888,11 @@ Accueil | Sportifano.com
                     Catégories populaires
                 </h2>
 
-
                 <p>
                     Trouvez rapidement ce dont vous avez besoin
                 </p>
 
             </div>
-
 
             <a
                 href="{% url 'category_list' %}"
@@ -994,13 +917,11 @@ Accueil | Sportifano.com
                         ⚽
                     </div>
 
-
                     <div>
 
                         <div class="category-name">
                             {{ category.name }}
                         </div>
-
 
                         {% if category.description %}
 
@@ -1017,9 +938,7 @@ Accueil | Sportifano.com
             {% empty %}
 
                 <div class="empty-state">
-
                     Aucune catégorie disponible.
-
                 </div>
 
             {% endfor %}
@@ -1043,13 +962,11 @@ Accueil | Sportifano.com
                     Produits populaires
                 </h2>
 
-
                 <p>
                     Découvrez nos derniers produits disponibles
                 </p>
 
             </div>
-
 
             <a
                 href="{% url 'product_list' %}"
@@ -1068,12 +985,9 @@ Accueil | Sportifano.com
                 <article class="product-card">
 
 
-                    <!-- =====================================
-                         IMAGE
-                    ===================================== -->
+                    <!-- IMAGE -->
 
                     <div class="product-image-box">
-
 
                         {% if product.quantity > 0 %}
 
@@ -1117,14 +1031,10 @@ Accueil | Sportifano.com
                     </div>
 
 
-                    <!-- =====================================
-                         INFORMATION
-                    ===================================== -->
+                    <!-- INFORMATION -->
 
                     <div class="product-content">
 
-
-                        <!-- CATEGORY -->
 
                         {% if product.category %}
 
@@ -1135,17 +1045,12 @@ Accueil | Sportifano.com
                         {% endif %}
 
 
-                        <!-- NAME -->
-
                         <div class="product-name">
                             {{ product.name }}
                         </div>
 
 
-                        <!-- =====================================
-                             VARIANTS
-                             TAILLE / POINTURE / COULEUR
-                        ===================================== -->
+                        <!-- VARIANTS -->
 
                         {% if product.variants.exists %}
 
@@ -1167,16 +1072,13 @@ Accueil | Sportifano.com
                         {% endif %}
 
 
-                        <!-- =====================================
-                             RATING
-                        ===================================== -->
+                        <!-- RATING -->
 
                         <div class="home-rating">
 
                             <span class="home-stars">
                                 ★★★★★
                             </span>
-
 
                             <span class="home-rating-text">
                                 Avis clients
@@ -1185,16 +1087,13 @@ Accueil | Sportifano.com
                         </div>
 
 
-                        <!-- =====================================
-                             PRICE
-                        ===================================== -->
+                        <!-- PRICE -->
 
                         <div class="home-price-row">
 
                             <span class="home-price">
                                 {{ product.price }}
                             </span>
-
 
                             <span class="home-currency">
                                 DT
@@ -1203,35 +1102,26 @@ Accueil | Sportifano.com
                         </div>
 
 
-                        <!-- =====================================
-                             DELIVERY
-                        ===================================== -->
+                        <!-- DELIVERY -->
 
                         {% if product.delivery %}
 
                             <div class="home-delivery">
-
                                 🚚 {{ product.delivery }}
-
                             </div>
 
                         {% else %}
 
                             <div class="home-delivery">
-
                                 ✓ Livraison disponible
-
                             </div>
 
                         {% endif %}
 
 
-                        <!-- =====================================
-                             ACTIONS
-                        ===================================== -->
+                        <!-- ACTIONS -->
 
                         <div class="home-actions">
-
 
                             <a
                                 href="{% url 'product_detail' product.id %}"
@@ -1258,13 +1148,11 @@ Accueil | Sportifano.com
 
                             {% endif %}
 
-
                         </div>
 
                     </div>
 
                 </article>
-
 
             {% empty %}
 
@@ -1274,11 +1162,9 @@ Accueil | Sportifano.com
                         ⚽
                     </div>
 
-
                     <h3>
                         Aucun produit disponible
                     </h3>
-
 
                     <p>
                         Ajoutez des produits depuis Django Admin.
