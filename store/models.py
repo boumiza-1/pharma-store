@@ -2,14 +2,21 @@ from django.db import models
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=100, unique=True)
-    description = models.TextField(blank=True)
+    name = models.CharField(
+        max_length=100,
+        unique=True
+    )
+
+    description = models.TextField(
+        blank=True
+    )
 
     def __str__(self):
         return self.name
 
 
 class Product(models.Model):
+
     category = models.ForeignKey(
         Category,
         on_delete=models.SET_NULL,
@@ -18,9 +25,13 @@ class Product(models.Model):
         related_name="products"
     )
 
-    name = models.CharField(max_length=200)
+    name = models.CharField(
+        max_length=200
+    )
 
-    description = models.TextField(blank=True)
+    description = models.TextField(
+        blank=True
+    )
 
     price = models.DecimalField(
         max_digits=10,
@@ -55,6 +66,7 @@ class Product(models.Model):
 
 
 class ProductVariant(models.Model):
+
     product = models.ForeignKey(
         Product,
         on_delete=models.CASCADE,
@@ -74,8 +86,15 @@ class ProductVariant(models.Model):
     )
 
     def __str__(self):
-        return f"{self.product.name} - {self.option_name}: {self.option_value}"
+        return (
+            f"{self.product.name} - "
+            f"{self.option_name}: "
+            f"{self.option_value}"
+        )
+
+
 class Order(models.Model):
+
     STATUS_CHOICES = [
         ("pending", "En attente"),
         ("preparing", "En préparation"),
@@ -92,13 +111,19 @@ class Order(models.Model):
         blank=True,
     )
 
-    customer_name = models.CharField(max_length=200)
+    customer_name = models.CharField(
+        max_length=200
+    )
 
-    phone = models.CharField(max_length=30)
+    phone = models.CharField(
+        max_length=30
+    )
 
     address = models.TextField()
 
-    city = models.CharField(max_length=100)
+    city = models.CharField(
+        max_length=100
+    )
 
     total = models.DecimalField(
         max_digits=10,
@@ -116,10 +141,14 @@ class Order(models.Model):
     )
 
     def __str__(self):
-        return f"Commande #{self.id} - {self.customer_name}"
+        return (
+            f"Commande #{self.id} - "
+            f"{self.customer_name}"
+        )
 
 
 class OrderItem(models.Model):
+
     order = models.ForeignKey(
         Order,
         on_delete=models.CASCADE,
@@ -142,10 +171,14 @@ class OrderItem(models.Model):
     )
 
     def __str__(self):
-        return f"{self.product.name} x {self.quantity}"
+        return (
+            f"{self.product.name} x "
+            f"{self.quantity}"
+        )
 
 
 class Review(models.Model):
+
     user = models.ForeignKey(
         "auth.User",
         on_delete=models.CASCADE,
@@ -175,4 +208,7 @@ class Review(models.Model):
         ]
 
     def __str__(self):
-        return f"{self.user.username} - {self.product.name}"
+        return (
+            f"{self.user.username} - "
+            f"{self.product.name}"
+        )
