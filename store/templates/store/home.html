@@ -5,7 +5,7 @@
 Accueil | Sportifano.com
 {% endblock %}
 
-
+{% load static %}
 {% block extra_css %}
 
 <style>
@@ -46,7 +46,8 @@ Accueil | Sportifano.com
                 rgba(4, 230, 218, 0.836),
                 rgba(21, 241, 223, 0.959)
             ),
-                    url("{% static 'store/images/sportifano.png' %}");
+            
+                    url("{% static 'images/sportifano.png' %}");
 
 
         background-size: cover;
