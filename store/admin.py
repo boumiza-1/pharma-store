@@ -52,8 +52,25 @@ def mark_delivered(modeladmin, request, queryset):
 
 @admin.action(description="Annuler la commande")
 def mark_cancelled(modeladmin, request, queryset):
-    queryset.update(status="cancelled")
 
+    for order in queryset:
+
+        # Ne pas remettre le stock une deuxième fois
+        if order.status == "cancelled":
+            continue
+
+        # Restaurer le stock
+        for item in order.items.all():
+
+            product = item.product
+
+            product.quantity += item.quantity
+
+            product.save(update_fields=["quantity"])
+
+        # Annuler la commande
+        order.status = "cancelled"
+        order.save(update_fields=["status"])
 
 @admin.action(description="Remettre en attente")
 def mark_pending(modeladmin, request, queryset):
