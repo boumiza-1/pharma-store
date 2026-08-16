@@ -1,23 +1,56 @@
 from django.contrib import admin
-from .models import Category, Product, Order, OrderItem
+
+from .models import (
+    Category,
+    Product,
+    ProductVariant,
+    Order,
+    OrderItem,
+)
 
 
-# =========================
+# ============================================================
 # CATEGORY
-# =========================
+# ============================================================
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ("id", "name", "description")
-    search_fields = ("name",)
+
+    list_display = (
+        "id",
+        "name",
+        "description",
+    )
+
+    search_fields = (
+        "name",
+    )
 
 
-# =========================
+# ============================================================
+# PRODUCT VARIANT INLINE
+# ============================================================
+
+class ProductVariantInline(admin.TabularInline):
+
+    model = ProductVariant
+
+    extra = 1
+
+    fields = (
+        "option_name",
+        "option_value",
+        "quantity",
+    )
+
+
+# ============================================================
 # PRODUCT
-# =========================
+# ============================================================
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
+
     list_display = (
         "id",
         "name",
@@ -28,58 +61,95 @@ class ProductAdmin(admin.ModelAdmin):
         "created_at",
     )
 
-    search_fields = ("name",)
+    search_fields = (
+        "name",
+    )
+
+    list_filter = (
+        "category",
+    )
+
+    inlines = [
+        ProductVariantInline,
+    ]
 
 
-# =========================
+# ============================================================
 # ORDER ACTIONS
-# =========================
+# ============================================================
 
 @admin.action(description="Mettre en préparation")
 def mark_preparing(modeladmin, request, queryset):
-    queryset.update(status="preparing")
+
+    queryset.update(
+        status="preparing"
+    )
 
 
 @admin.action(description="Mettre en livraison")
 def mark_shipping(modeladmin, request, queryset):
-    queryset.update(status="shipping")
+
+    queryset.update(
+        status="shipping"
+    )
 
 
 @admin.action(description="Marquer comme livrée")
 def mark_delivered(modeladmin, request, queryset):
-    queryset.update(status="delivered")
 
+    queryset.update(
+        status="delivered"
+    )
+
+
+@admin.action(description="Remettre en attente")
+def mark_pending(modeladmin, request, queryset):
+
+    queryset.update(
+        status="pending"
+    )
+
+
+# ============================================================
+# CANCEL ORDER + RESTORE STOCK
+# ============================================================
 
 @admin.action(description="Annuler la commande")
 def mark_cancelled(modeladmin, request, queryset):
 
     for order in queryset:
 
-        # Ne pas remettre le stock une deuxième fois
+        # Éviter de restaurer le stock
+        # si la commande est déjà annulée
         if order.status == "cancelled":
             continue
 
-        # Restaurer le stock
+        # Restaurer le stock des produits
         for item in order.items.all():
 
             product = item.product
 
             product.quantity += item.quantity
 
-            product.save(update_fields=["quantity"])
+            product.save(
+                update_fields=[
+                    "quantity"
+                ]
+            )
 
-        # Annuler la commande
+        # Changer le statut
         order.status = "cancelled"
-        order.save(update_fields=["status"])
 
-@admin.action(description="Remettre en attente")
-def mark_pending(modeladmin, request, queryset):
-    queryset.update(status="pending")
+        order.save(
+            update_fields=[
+                "status"
+            ]
+        )
 
 
-# =========================
+# ============================================================
 # ORDER
-# =========================
+# ============================================================
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
@@ -114,9 +184,9 @@ class OrderAdmin(admin.ModelAdmin):
     ]
 
 
-# =========================
+# ============================================================
 # ORDER ITEM
-# =========================
+# ============================================================
 
 @admin.register(OrderItem)
 class OrderItemAdmin(admin.ModelAdmin):

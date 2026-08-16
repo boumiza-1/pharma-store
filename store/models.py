@@ -27,7 +27,9 @@ class Product(models.Model):
         decimal_places=2
     )
 
-    quantity = models.PositiveIntegerField(default=0)
+    quantity = models.PositiveIntegerField(
+        default=0
+    )
 
     delivery = models.CharField(
         max_length=255,
@@ -52,6 +54,27 @@ class Product(models.Model):
         return self.name
 
 
+class ProductVariant(models.Model):
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.CASCADE,
+        related_name="variants"
+    )
+
+    option_name = models.CharField(
+        max_length=100
+    )
+
+    option_value = models.CharField(
+        max_length=100
+    )
+
+    quantity = models.PositiveIntegerField(
+        default=0
+    )
+
+    def __str__(self):
+        return f"{self.product.name} - {self.option_name}: {self.option_value}"
 class Order(models.Model):
     STATUS_CHOICES = [
         ("pending", "En attente"),
