@@ -1,7 +1,9 @@
 from django.db import models
+from cloudinary.models import CloudinaryField
 
 
 class Category(models.Model):
+
     name = models.CharField(
         max_length=100,
         unique=True
@@ -47,11 +49,18 @@ class Product(models.Model):
         blank=True
     )
 
-    image = models.ImageField(
-        upload_to="products/",
+    # ==========================================
+    # PRODUCT IMAGE - CLOUDINARY
+    # ==========================================
+
+    image = CloudinaryField(
+        "image",
+        folder="sportifano/products",
         blank=True,
         null=True
     )
+
+    # ==========================================
 
     created_at = models.DateTimeField(
         auto_now_add=True
@@ -200,6 +209,7 @@ class Review(models.Model):
     )
 
     class Meta:
+
         constraints = [
             models.UniqueConstraint(
                 fields=["user", "product"],
