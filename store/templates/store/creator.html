@@ -1,10 +1,864 @@
-
 {% extends "store/base.html" %}
+{% load static %}
+
+{% block title %}
+Créateur | Pharma Store
+{% endblock %}
+
+{% block extra_css %}
+
+<style>
+
+    /* =========================================
+       CREATOR PAGE
+    ========================================= */
+
+    .creator-page {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding-bottom: 50px;
+    }
+
+
+    /* =========================================
+       HERO
+    ========================================= */
+
+    .creator-hero {
+        position: relative;
+        overflow: hidden;
+
+        min-height: 330px;
+
+        display: flex;
+        align-items: center;
+
+        padding: 55px;
+
+        margin-bottom: 25px;
+
+        border-radius: 28px;
+
+        background:
+            radial-gradient(
+                circle at 90% 10%,
+                rgba(96,165,250,.35),
+                transparent 30%
+            ),
+            radial-gradient(
+                circle at 10% 100%,
+                rgba(37,99,235,.25),
+                transparent 35%
+            ),
+            linear-gradient(
+                135deg,
+                #0f172a,
+                #1e3a8a
+            );
+
+        color: white;
+
+        box-shadow:
+            0 20px 50px rgba(15,23,42,.16);
+    }
+
+    .creator-hero::before {
+        content: "";
+
+        position: absolute;
+
+        width: 260px;
+        height: 260px;
+
+        right: -80px;
+        bottom: -100px;
+
+        border-radius: 50%;
+
+        border: 1px solid rgba(255,255,255,.15);
+    }
+
+    .creator-hero-content {
+        position: relative;
+        z-index: 2;
+
+        max-width: 720px;
+    }
+
+    .creator-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+
+        padding: 8px 14px;
+
+        margin-bottom: 18px;
+
+        border-radius: 999px;
+
+        background: rgba(255,255,255,.10);
+
+        border: 1px solid rgba(255,255,255,.18);
+
+        backdrop-filter: blur(10px);
+
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    .creator-hero h1 {
+        margin: 0 0 14px;
+
+        font-size: 46px;
+
+        line-height: 1.1;
+
+        font-weight: 900;
+
+        letter-spacing: -.8px;
+    }
+
+    .creator-hero p {
+        margin: 0;
+
+        max-width: 650px;
+
+        color: rgba(255,255,255,.82);
+
+        font-size: 16px;
+
+        line-height: 1.8;
+    }
+
+
+    /* =========================================
+       PROFILE
+    ========================================= */
+
+    .creator-profile {
+        display: grid;
+
+        grid-template-columns: 360px 1fr;
+
+        overflow: hidden;
+
+        background: white;
+
+        border: 1px solid #e5e7eb;
+
+        border-radius: 26px;
+
+        box-shadow:
+            0 12px 35px rgba(15,23,42,.07);
+    }
+
+
+    /* =========================================
+       PHOTO
+    ========================================= */
+
+    .creator-photo-section {
+        display: flex;
+
+        flex-direction: column;
+
+        align-items: center;
+
+        justify-content: center;
+
+        padding: 45px 30px;
+
+        background:
+            linear-gradient(
+                145deg,
+                #eff6ff,
+                #f8fafc
+            );
+    }
+
+    .creator-photo-wrapper {
+        position: relative;
+
+        width: 230px;
+        height: 230px;
+
+        padding: 7px;
+
+        border-radius: 50%;
+
+        background: white;
+
+        box-shadow:
+            0 18px 45px rgba(37,99,235,.18);
+    }
+
+    .creator-photo-wrapper::after {
+        content: "";
+
+        position: absolute;
+
+        inset: -8px;
+
+        border-radius: 50%;
+
+        border: 2px solid #dbeafe;
+
+        z-index: -1;
+    }
+
+    .creator-photo {
+        width: 100%;
+        height: 100%;
+
+        display: block;
+
+        object-fit: cover;
+
+        border-radius: 50%;
+    }
+
+    .creator-photo-name {
+        margin-top: 22px;
+
+        color: #111827;
+
+        font-size: 20px;
+
+        font-weight: 900;
+
+        text-align: center;
+    }
+
+    .creator-photo-role {
+        margin-top: 5px;
+
+        color: #6b7280;
+
+        font-size: 13px;
+
+        text-align: center;
+    }
+
+
+    /* =========================================
+       PROFILE CONTENT
+    ========================================= */
+
+    .creator-info {
+        padding: 45px;
+    }
+
+    .creator-role {
+        display: inline-flex;
+
+        align-items: center;
+
+        padding: 7px 12px;
+
+        margin-bottom: 14px;
+
+        border-radius: 999px;
+
+        background: #eff6ff;
+
+        color: #2563eb;
+
+        font-size: 11px;
+
+        font-weight: 900;
+
+        text-transform: uppercase;
+
+        letter-spacing: .4px;
+    }
+
+    .creator-name {
+        margin: 0 0 12px;
+
+        color: #111827;
+
+        font-size: 38px;
+
+        line-height: 1.15;
+
+        font-weight: 900;
+    }
+
+    .creator-description {
+        max-width: 680px;
+
+        margin: 0 0 25px;
+
+        color: #6b7280;
+
+        font-size: 14px;
+
+        line-height: 1.8;
+    }
+
+
+    /* =========================================
+       DETAILS
+    ========================================= */
+
+    .creator-details {
+        display: grid;
+
+        grid-template-columns: repeat(2, 1fr);
+
+        gap: 12px;
+
+        margin-bottom: 25px;
+    }
+
+    .creator-detail {
+        display: flex;
+
+        align-items: center;
+
+        gap: 12px;
+
+        padding: 13px;
+
+        background: #f8fafc;
+
+        border: 1px solid #eef2f7;
+
+        border-radius: 13px;
+
+        transition: .2s ease;
+    }
+
+    .creator-detail:hover {
+        transform: translateY(-2px);
+
+        border-color: #dbeafe;
+
+        background: #f8fbff;
+    }
+
+    .creator-detail-icon {
+        width: 42px;
+        height: 42px;
+
+        flex-shrink: 0;
+
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 11px;
+
+        background: #eff6ff;
+
+        font-size: 19px;
+    }
+
+    .creator-detail-label {
+        margin-bottom: 3px;
+
+        color: #9ca3af;
+
+        font-size: 9px;
+
+        font-weight: 800;
+
+        text-transform: uppercase;
+
+        letter-spacing: .5px;
+    }
+
+    .creator-detail-value {
+        color: #111827;
+
+        font-size: 13px;
+
+        font-weight: 800;
+    }
+
+
+    /* =========================================
+       SKILLS
+    ========================================= */
+
+    .creator-skills-title {
+        margin-bottom: 10px;
+
+        color: #111827;
+
+        font-size: 13px;
+
+        font-weight: 900;
+    }
+
+    .creator-skills {
+        display: flex;
+
+        flex-wrap: wrap;
+
+        gap: 7px;
+
+        margin-bottom: 25px;
+    }
+
+    .creator-skill {
+        padding: 6px 10px;
+
+        border-radius: 7px;
+
+        background: #f3f4f6;
+
+        border: 1px solid #e5e7eb;
+
+        color: #4b5563;
+
+        font-size: 10px;
+
+        font-weight: 800;
+    }
+
+
+    /* =========================================
+       BUTTONS
+    ========================================= */
+
+    .creator-actions {
+        display: flex;
+
+        flex-wrap: wrap;
+
+        gap: 9px;
+    }
+
+    .creator-btn {
+        display: inline-flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        gap: 7px;
+
+        min-height: 44px;
+
+        padding: 0 16px;
+
+        border-radius: 10px;
+
+        font-size: 12px;
+
+        font-weight: 900;
+
+        text-decoration: none;
+
+        transition: .2s ease;
+    }
+
+    .creator-btn-primary {
+        background: #2563eb;
+
+        color: white;
+    }
+
+    .creator-btn-primary:hover {
+        background: #1d4ed8;
+
+        color: white;
+
+        transform: translateY(-2px);
+    }
+
+    .creator-btn-secondary {
+        background: white;
+
+        color: #374151;
+
+        border: 1px solid #e5e7eb;
+    }
+
+    .creator-btn-secondary:hover {
+        background: #f8fafc;
+
+        color: #111827;
+
+        transform: translateY(-2px);
+    }
+
+
+    /* =========================================
+       FOOTER
+    ========================================= */
+
+    .creator-footer {
+        margin-top: 20px;
+
+        padding: 20px;
+
+        text-align: center;
+
+        background: white;
+
+        border: 1px solid #e5e7eb;
+
+        border-radius: 17px;
+
+        color: #6b7280;
+
+        font-size: 12px;
+
+        line-height: 1.7;
+    }
+
+    .creator-footer strong {
+        color: #111827;
+    }
+
+
+    /* =========================================
+       RESPONSIVE
+    ========================================= */
+
+    @media (max-width: 900px) {
+
+        .creator-profile {
+            grid-template-columns: 1fr;
+        }
+
+        .creator-photo-section {
+            padding: 40px 20px;
+        }
+
+        .creator-name {
+            font-size: 32px;
+        }
+    }
+
+
+    @media (max-width: 650px) {
+
+        .creator-page {
+            padding: 0 10px 35px;
+        }
+
+        .creator-hero {
+            min-height: auto;
+
+            padding: 40px 25px;
+
+            border-radius: 22px;
+        }
+
+        .creator-hero h1 {
+            font-size: 32px;
+        }
+
+        .creator-hero p {
+            font-size: 14px;
+        }
+
+        .creator-profile {
+            border-radius: 22px;
+        }
+
+        .creator-photo-wrapper {
+            width: 190px;
+            height: 190px;
+        }
+
+        .creator-info {
+            padding: 30px 22px;
+        }
+
+        .creator-name {
+            font-size: 28px;
+        }
+
+        .creator-details {
+            grid-template-columns: 1fr;
+        }
+
+        .creator-actions {
+            flex-direction: column;
+        }
+
+        .creator-btn {
+            width: 100%;
+        }
+    }
+
+</style>
+
+{% endblock %}
+
 
 {% block content %}
 
-<h1>CREATOR TEST</h1>
+<div class="creator-page">
 
-<p>La page creator tekhdem.</p>
+
+    <!-- =========================================
+         HERO
+    ========================================= -->
+
+    <section class="creator-hero">
+
+        <div class="creator-hero-content">
+
+            <div class="creator-badge">
+                💻 Développement & Technologie
+            </div>
+
+            <h1>
+                Créateur de SPORTIFANO.COM
+            </h1>
+
+            <p>
+                Une plateforme web moderne conçue pour offrir
+                une expérience simple, rapide et professionnelle
+                aux utilisateurs.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================================
+         PROFILE
+    ========================================= -->
+
+    <section class="creator-profile">
+
+
+        <!-- PHOTO -->
+
+        <div class="creator-photo-section">
+
+            <div class="creator-photo-wrapper">
+
+                <img
+                    src="{% static 'store/images/amin.jpg' %}"
+                    alt="Mohamed Amine Boumiza"
+                    class="creator-photo"
+                >
+
+            </div>
+
+            <div class="creator-photo-name">
+                Mohamed Amine Boumiza
+            </div>
+
+            <div class="creator-photo-role">
+                Ingénieur informatique
+            </div>
+
+        </div>
+
+
+        <!-- INFORMATION -->
+
+        <div class="creator-info">
+
+            <div class="creator-role">
+                👨‍💻 Ingénieur informatique
+            </div>
+
+            <h2 class="creator-name">
+                Mohamed Amine Boumiza
+            </h2>
+
+            <p class="creator-description">
+                Développeur informatique passionné par la création
+                de solutions web modernes, performantes et
+                adaptées aux besoins des utilisateurs.
+
+                Ce projet a été développé avec une approche
+                orientée expérience utilisateur, simplicité
+                et efficacité.
+            </p>
+
+
+            <!-- DETAILS -->
+
+            <div class="creator-details">
+
+                <div class="creator-detail">
+
+                    <div class="creator-detail-icon">
+                        📱
+                    </div>
+
+                    <div>
+
+                        <div class="creator-detail-label">
+                            Téléphone
+                        </div>
+
+                        <div class="creator-detail-value">
+                            96 206 615
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="creator-detail">
+
+                    <div class="creator-detail-icon">
+                        📍
+                    </div>
+
+                    <div>
+
+                        <div class="creator-detail-label">
+                            Localisation
+                        </div>
+
+                        <div class="creator-detail-value">
+                            Sousse, Tunisie
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="creator-detail">
+
+                    <div class="creator-detail-icon">
+                        💻
+                    </div>
+
+                    <div>
+
+                        <div class="creator-detail-label">
+                            Spécialité
+                        </div>
+
+                        <div class="creator-detail-value">
+                            Développement Full Stack
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="creator-detail">
+
+                    <div class="creator-detail-icon">
+                        🌐
+                    </div>
+
+                    <div>
+
+                        <div class="creator-detail-label">
+                            Domaine
+                        </div>
+
+                        <div class="creator-detail-value">
+                            Web & Applications
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- SKILLS -->
+
+            <div class="creator-skills-title">
+                Technologies & compétences
+            </div>
+
+            <div class="creator-skills">
+
+                <span class="creator-skill">
+                    Python
+                </span>
+
+                <span class="creator-skill">
+                    Django
+                </span>
+
+                <span class="creator-skill">
+                    PostgreSQL
+                </span>
+
+                <span class="creator-skill">
+                    HTML
+                </span>
+
+                <span class="creator-skill">
+                    CSS
+                </span>
+
+                <span class="creator-skill">
+                    JavaScript
+                </span>
+
+                <span class="creator-skill">
+                    Bootstrap
+                </span>
+
+                <span class="creator-skill">
+                    UI / UX
+                </span>
+
+            </div>
+
+
+            <!-- ACTIONS -->
+
+            <div class="creator-actions">
+
+                <a
+                    href="tel:+21696206615"
+                    class="creator-btn creator-btn-primary"
+                >
+                    📞 Contacter
+                </a>
+
+                <a
+                    href="https://wa.me/21696206615"
+                    target="_blank"
+                    rel="noopener"
+                    class="creator-btn creator-btn-secondary"
+                >
+                    💬 WhatsApp
+                </a>
+
+                <a
+                    href="{% url 'home' %}"
+                    class="creator-btn creator-btn-secondary"
+                >
+                    🏠 Accueil
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================================
+         FOOTER
+    ========================================= -->
+
+    <div class="creator-footer">
+
+        <strong>Pharma Store</strong>
+        — Conçu et développé avec soin pour une expérience
+        digitale moderne, simple et intuitive.
+
+    </div>
+
+</div>
 
 {% endblock %}
+```
