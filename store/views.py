@@ -154,7 +154,7 @@ def remove_from_cart(request, product_id):
     return redirect("cart")
 
 
-@login_required
+
 def checkout(request):
 
     cart_data = request.session.get(
