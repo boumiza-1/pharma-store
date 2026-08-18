@@ -265,13 +265,13 @@ def checkout(request):
 
         # Création de la commande
         order = Order.objects.create(
-            user=request.user,
-            customer_name=customer_name,
-            phone=phone,
-            address=address,
-            city=city,
-            total=total,
-        )
+    user=request.user if request.user.is_authenticated else None,
+    customer_name=customer_name,
+    phone=phone,
+    address=address,
+    city=city,
+    total=total,
+)
 
         # Création des lignes + diminution du stock
         for product in products:
