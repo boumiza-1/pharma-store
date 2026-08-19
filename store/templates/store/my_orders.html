@@ -1,6 +1,8 @@
 {% extends "store/base.html" %}
 
-{% block title %}Mes commandes{% endblock %}
+{% block title %}
+Mes commandes
+{% endblock %}
 
 {% block content %}
 
@@ -18,6 +20,7 @@
         📦 Mes commandes
     </h1>
 
+
     {% if orders %}
 
         {% for order in orders %}
@@ -30,7 +33,8 @@
                 box-shadow: 0 3px 15px rgba(0,0,0,0.08);
             ">
 
-                <!-- Header commande -->
+                <!-- HEADER COMMANDE -->
+
                 <div style="
                     display: flex;
                     justify-content: space-between;
@@ -57,6 +61,7 @@
 
                     </div>
 
+
                     <div style="
                         font-weight: bold;
                         font-size: 20px;
@@ -67,7 +72,8 @@
                 </div>
 
 
-                <!-- Séparation -->
+                <!-- SEPARATION -->
+
                 <hr style="
                     border: none;
                     border-top: 1px solid #eee;
@@ -75,44 +81,64 @@
                 ">
 
 
-                <!-- Statut -->
+                <!-- STATUT -->
+
                 <div>
 
-                    <strong>Statut :</strong>
+                    <strong>
+                        Statut :
+                    </strong>
 
                     {% if order.status == "pending" %}
 
-                        <span style="color: #f59e0b; font-weight: 600;">
+                        <span style="
+                            color: #f59e0b;
+                            font-weight: 600;
+                        ">
                             🟡 En attente
                         </span>
 
                     {% elif order.status == "preparing" %}
 
-                        <span style="color: #2563eb; font-weight: 600;">
+                        <span style="
+                            color: #2563eb;
+                            font-weight: 600;
+                        ">
                             🔵 En préparation
                         </span>
 
                     {% elif order.status == "shipping" %}
 
-                        <span style="color: #7c3aed; font-weight: 600;">
+                        <span style="
+                            color: #7c3aed;
+                            font-weight: 600;
+                        ">
                             🚚 En livraison
                         </span>
 
                     {% elif order.status == "delivered" %}
 
-                        <span style="color: #198754; font-weight: 600;">
+                        <span style="
+                            color: #198754;
+                            font-weight: 600;
+                        ">
                             ✅ Livrée
                         </span>
 
                     {% elif order.status == "cancelled" %}
 
-                        <span style="color: #dc3545; font-weight: 600;">
+                        <span style="
+                            color: #dc3545;
+                            font-weight: 600;
+                        ">
                             ❌ Annulée
                         </span>
 
                     {% else %}
 
-                        <span style="color: #6b7280;">
+                        <span style="
+                            color: #6b7280;
+                        ">
                             {{ order.status }}
                         </span>
 
@@ -121,30 +147,93 @@
                 </div>
 
 
-                <!-- Produits -->
-                <div style="margin-top: 20px;">
+                <!-- PRODUITS -->
 
-                    <strong>Produits :</strong>
+                <div style="
+                    margin-top: 20px;
+                ">
+
+                    <strong>
+                        Produits :
+                    </strong>
+
 
                     {% for item in order.items.all %}
 
                         <div style="
                             display: flex;
                             justify-content: space-between;
-                            align-items: center;
-                            gap: 15px;
-                            padding: 12px 0;
+                            align-items: flex-start;
+                            gap: 20px;
+                            padding: 16px 0;
                             border-bottom: 1px solid #f1f1f1;
+                            flex-wrap: wrap;
                         ">
 
-                            <span>
-                                {{ item.product.name }}
-                                × {{ item.quantity }}
-                            </span>
+                            <!-- PRODUCT INFO -->
 
-                            <span style="font-weight: 600;">
+                            <div>
+
+                                <div style="
+                                    font-weight: 700;
+                                    font-size: 16px;
+                                    margin-bottom: 7px;
+                                ">
+
+                                    {{ item.product.name }}
+
+                                </div>
+
+
+                                <!-- VARIANT -->
+
+                                {% if item.variant %}
+
+                                    <div style="
+                                        color: #4b5563;
+                                        font-size: 14px;
+                                        margin-bottom: 5px;
+                                    ">
+
+                                        <strong>
+                                            {{ item.variant.option_name }} :
+                                        </strong>
+
+                                        {{ item.variant.option_value }}
+
+                                    </div>
+
+                                {% endif %}
+
+
+                                <!-- QUANTITY -->
+
+                                <div style="
+                                    color: #6b7280;
+                                    font-size: 14px;
+                                ">
+
+                                    Quantité :
+                                    <strong>
+                                        {{ item.quantity }}
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- PRICE -->
+
+                            <div style="
+                                text-align: right;
+                                font-weight: 600;
+                                white-space: nowrap;
+                            ">
+
                                 {{ item.price }} DT
-                            </span>
+
+                            </div>
 
                         </div>
 
@@ -152,13 +241,70 @@
 
                 </div>
 
+
+                <!-- CUSTOMER INFORMATION -->
+
+                <div style="
+                    margin-top: 20px;
+                    padding: 15px;
+                    background: #f8fafc;
+                    border-radius: 10px;
+                ">
+
+                    <div style="
+                        font-weight: 700;
+                        margin-bottom: 8px;
+                    ">
+                        📍 Informations de livraison
+                    </div>
+
+                    <div style="
+                        color: #6b7280;
+                        font-size: 14px;
+                        line-height: 1.7;
+                    ">
+
+                        {{ order.customer_name }}<br>
+
+                        {{ order.phone }}<br>
+
+                        {{ order.address }}<br>
+
+                        {{ order.city }}
+
+                    </div>
+
+                </div>
+
+
+                <!-- TOTAL -->
+
+                <div style="
+                    display: flex;
+                    justify-content: flex-end;
+                    margin-top: 20px;
+                    font-size: 18px;
+                    font-weight: 800;
+                ">
+
+                    Total :
+                    <span style="
+                        margin-left: 8px;
+                    ">
+                        {{ order.total }} DT
+                    </span>
+
+                </div>
+
             </div>
 
         {% endfor %}
 
+
     {% else %}
 
-        <!-- Aucune commande -->
+        <!-- AUCUNE COMMANDE -->
+
         <div style="
             background: white;
             padding: 50px 30px;
@@ -174,11 +320,13 @@
                 📦
             </div>
 
+
             <h2 style="
                 margin-bottom: 10px;
             ">
                 Vous n'avez pas encore de commande.
             </h2>
+
 
             <p style="
                 margin: 15px 0 25px;
@@ -186,6 +334,7 @@
             ">
                 Découvrez nos produits et passez votre première commande.
             </p>
+
 
             <a
                 href="{% url 'product_list' %}"

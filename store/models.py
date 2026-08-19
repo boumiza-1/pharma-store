@@ -2,6 +2,10 @@ from django.db import models
 from cloudinary.models import CloudinaryField
 
 
+# =========================================================
+# CATEGORY
+# =========================================================
+
 class Category(models.Model):
 
     name = models.CharField(
@@ -16,6 +20,10 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+
+# =========================================================
+# PRODUCT
+# =========================================================
 
 class Product(models.Model):
 
@@ -40,6 +48,16 @@ class Product(models.Model):
         decimal_places=2
     )
 
+    # -----------------------------------------------------
+    # STOCK TOTAL
+    #
+    # Utilisé uniquement quand le produit N'A PAS
+    # de variantes.
+    #
+    # Exemple:
+    # Sac = 15
+    # -----------------------------------------------------
+
     quantity = models.PositiveIntegerField(
         default=0
     )
@@ -49,9 +67,9 @@ class Product(models.Model):
         blank=True
     )
 
-    # ==========================================
-    # PRODUCT IMAGE - CLOUDINARY
-    # ==========================================
+    # -----------------------------------------------------
+    # IMAGE PRINCIPALE
+    # -----------------------------------------------------
 
     image = CloudinaryField(
         "image",
@@ -59,8 +77,6 @@ class Product(models.Model):
         blank=True,
         null=True
     )
-
-    # ==========================================
 
     created_at = models.DateTimeField(
         auto_now_add=True
@@ -70,9 +86,79 @@ class Product(models.Model):
         auto_now=True
     )
 
+    # -----------------------------------------------------
+    # Vérifier si le produit possède des variantes
+    # -----------------------------------------------------
+
+    @property
+    def has_variants(self):
+        return self.variants.exists()
+
+    # -----------------------------------------------------
+    # Stock disponible
+    #
+    # Sans variantes:
+    #     Product.quantity
+    #
+    # Avec variantes:
+    #     somme des quantities des variantes
+    # -----------------------------------------------------
+
+    @property
+    def total_stock(self):
+
+        if self.has_variants:
+            return sum(
+                variant.quantity
+                for variant in self.variants.all()
+            )
+
+        return self.quantity
+
+    # -----------------------------------------------------
+
+    @property
+    def is_in_stock(self):
+
+        return self.total_stock > 0
+
+    # -----------------------------------------------------
+
     def __str__(self):
         return self.name
 
+
+# =========================================================
+# PRODUCT IMAGES
+# =========================================================
+
+class ProductImage(models.Model):
+
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.CASCADE,
+        related_name="images"
+    )
+
+    image = CloudinaryField(
+        "image",
+        folder="sportifano/products"
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    class Meta:
+        ordering = ["created_at"]
+
+    def __str__(self):
+        return f"Image - {self.product.name}"
+
+
+# =========================================================
+# PRODUCT VARIANTS
+# =========================================================
 
 class ProductVariant(models.Model):
 
@@ -82,25 +168,66 @@ class ProductVariant(models.Model):
         related_name="variants"
     )
 
+    # Exemple:
+    # Taille
+    # Pointure
+    # Couleur
+
     option_name = models.CharField(
         max_length=100
     )
+
+    # Exemple:
+    # S
+    # M
+    # L
+    # XL
+    # 41
+    # 42
+    # Noir
+    # Rouge
 
     option_value = models.CharField(
         max_length=100
     )
 
+    # Stock de cette variante
     quantity = models.PositiveIntegerField(
         default=0
     )
 
+    class Meta:
+        ordering = ["id"]
+
+        constraints = [
+            models.UniqueConstraint(
+                fields=[
+                    "product",
+                    "option_name",
+                    "option_value"
+                ],
+                name="unique_product_variant"
+            )
+        ]
+
     def __str__(self):
+
         return (
             f"{self.product.name} - "
             f"{self.option_name}: "
-            f"{self.option_value}"
+            f"{self.option_value} "
+            f"({self.quantity})"
         )
 
+    @property
+    def is_in_stock(self):
+
+        return self.quantity > 0
+
+
+# =========================================================
+# ORDER
+# =========================================================
 
 class Order(models.Model):
 
@@ -150,11 +277,16 @@ class Order(models.Model):
     )
 
     def __str__(self):
+
         return (
             f"Commande #{self.id} - "
             f"{self.customer_name}"
         )
 
+
+# =========================================================
+# ORDER ITEM
+# =========================================================
 
 class OrderItem(models.Model):
 
@@ -170,6 +302,20 @@ class OrderItem(models.Model):
         related_name="order_items"
     )
 
+    # -----------------------------------------------------
+    # Variante choisie par le client
+    #
+    # Peut être NULL pour les produits sans variantes.
+    # -----------------------------------------------------
+
+    variant = models.ForeignKey(
+        ProductVariant,
+        on_delete=models.PROTECT,
+        related_name="order_items",
+        null=True,
+        blank=True
+    )
+
     quantity = models.PositiveIntegerField(
         default=1
     )
@@ -180,11 +326,25 @@ class OrderItem(models.Model):
     )
 
     def __str__(self):
+
+        if self.variant:
+
+            return (
+                f"{self.product.name} - "
+                f"{self.variant.option_name}: "
+                f"{self.variant.option_value} x "
+                f"{self.quantity}"
+            )
+
         return (
             f"{self.product.name} x "
             f"{self.quantity}"
         )
 
+
+# =========================================================
+# REVIEW
+# =========================================================
 
 class Review(models.Model):
 
@@ -212,12 +372,16 @@ class Review(models.Model):
 
         constraints = [
             models.UniqueConstraint(
-                fields=["user", "product"],
+                fields=[
+                    "user",
+                    "product"
+                ],
                 name="unique_user_product_review"
             )
         ]
 
     def __str__(self):
+
         return (
             f"{self.user.username} - "
             f"{self.product.name}"

@@ -3,33 +3,35 @@ from django.contrib import admin
 from .models import (
     Category,
     Product,
+    ProductImage,
     ProductVariant,
     Order,
     OrderItem,
+    Review,
 )
 
 
-# ============================================================
-# CATEGORY
-# ============================================================
+# =========================================================
+# PRODUCT IMAGES
+# =========================================================
 
-@admin.register(Category)
-class CategoryAdmin(admin.ModelAdmin):
+class ProductImageInline(admin.TabularInline):
 
-    list_display = (
-        "id",
-        "name",
-        "description",
+    model = ProductImage
+
+    extra = 1
+
+    fields = (
+        "image",
     )
 
-    search_fields = (
-        "name",
-    )
+    verbose_name = "Image supplémentaire"
+    verbose_name_plural = "Images supplémentaires"
 
 
-# ============================================================
-# PRODUCT VARIANT INLINE
-# ============================================================
+# =========================================================
+# PRODUCT VARIANTS
+# =========================================================
 
 class ProductVariantInline(admin.TabularInline):
 
@@ -43,113 +45,81 @@ class ProductVariantInline(admin.TabularInline):
         "quantity",
     )
 
+    verbose_name = "Variante"
+    verbose_name_plural = "Variantes / Pointures / Tailles"
 
-# ============================================================
+
+# =========================================================
 # PRODUCT
-# ============================================================
+# =========================================================
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
 
     list_display = (
-        "id",
         "name",
         "category",
         "price",
         "quantity",
-        "delivery",
+        "total_stock",
+        "has_variants",
         "created_at",
+    )
+
+    list_filter = (
+        "category",
+        "created_at",
+    )
+
+    search_fields = (
+        "name",
+        "description",
+    )
+
+    inlines = [
+        ProductVariantInline,
+        ProductImageInline,
+    ]
+
+
+# =========================================================
+# CATEGORY
+# =========================================================
+
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+
+    list_display = (
+        "name",
+        "description",
     )
 
     search_fields = (
         "name",
     )
 
-    list_filter = (
-        "category",
-    )
 
-    inlines = [
-        ProductVariantInline,
-    ]
+# =========================================================
+# ORDER ITEM INLINE
+# =========================================================
 
+class OrderItemInline(admin.TabularInline):
 
-# ============================================================
-# ORDER ACTIONS
-# ============================================================
+    model = OrderItem
 
-@admin.action(description="Mettre en préparation")
-def mark_preparing(modeladmin, request, queryset):
+    extra = 0
 
-    queryset.update(
-        status="preparing"
-    )
-
-
-@admin.action(description="Mettre en livraison")
-def mark_shipping(modeladmin, request, queryset):
-
-    queryset.update(
-        status="shipping"
+    readonly_fields = (
+        "product",
+        "variant",
+        "quantity",
+        "price",
     )
 
 
-@admin.action(description="Marquer comme livrée")
-def mark_delivered(modeladmin, request, queryset):
-
-    queryset.update(
-        status="delivered"
-    )
-
-
-@admin.action(description="Remettre en attente")
-def mark_pending(modeladmin, request, queryset):
-
-    queryset.update(
-        status="pending"
-    )
-
-
-# ============================================================
-# CANCEL ORDER + RESTORE STOCK
-# ============================================================
-
-@admin.action(description="Annuler la commande")
-def mark_cancelled(modeladmin, request, queryset):
-
-    for order in queryset:
-
-        # Éviter de restaurer le stock
-        # si la commande est déjà annulée
-        if order.status == "cancelled":
-            continue
-
-        # Restaurer le stock des produits
-        for item in order.items.all():
-
-            product = item.product
-
-            product.quantity += item.quantity
-
-            product.save(
-                update_fields=[
-                    "quantity"
-                ]
-            )
-
-        # Changer le statut
-        order.status = "cancelled"
-
-        order.save(
-            update_fields=[
-                "status"
-            ]
-        )
-
-
-# ============================================================
+# =========================================================
 # ORDER
-# ============================================================
+# =========================================================
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
@@ -166,40 +136,41 @@ class OrderAdmin(admin.ModelAdmin):
 
     list_filter = (
         "status",
-        "city",
+        "created_at",
     )
 
     search_fields = (
         "customer_name",
         "phone",
-        "address",
+        "city",
     )
 
-    actions = [
-        mark_pending,
-        mark_preparing,
-        mark_shipping,
-        mark_delivered,
-        mark_cancelled,
+    inlines = [
+        OrderItemInline,
     ]
 
 
-# ============================================================
-# ORDER ITEM
-# ============================================================
+# =========================================================
+# REVIEW
+# =========================================================
 
-@admin.register(OrderItem)
-class OrderItemAdmin(admin.ModelAdmin):
+@admin.register(Review)
+class ReviewAdmin(admin.ModelAdmin):
 
     list_display = (
-        "id",
-        "order",
+        "user",
         "product",
-        "quantity",
-        "price",
+        "rating",
+        "created_at",
+    )
+
+    list_filter = (
+        "rating",
+        "created_at",
     )
 
     search_fields = (
+        "user__username",
         "product__name",
-        "order__customer_name",
+        "comment",
     )

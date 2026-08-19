@@ -1045,25 +1045,37 @@ Accueil | Sportifano.com
 
 
                         <!-- VARIANTS -->
+{% if product.variants.exists %}
 
-                        {% if product.variants.exists %}
+    <a
+        href="{% url 'product_detail' product.id %}"
+        class="home-cart-btn"
+    >
+        Choisir la pointure
+    </a>
 
-                            <div class="product-variants">
+{% elif product.quantity > 0 %}
 
-                                {% for variant in product.variants.all %}
+    <a
+        href="{% url 'add_to_cart' product.id %}"
+        class="home-cart-btn"
+    >
+        🛒 Ajouter
+    </a>
 
-                                    <span class="variant-badge">
+{% else %}
 
-                                        {{ variant.option_name }}:
-                                        {{ variant.option_value }}
+    <span class="home-disabled-btn">
+        Indisponible
+    </span>
 
-                                    </span>
+{% endif %}
 
-                                {% endfor %}
+        {% endfor %}
 
-                            </div>
+    </div>
 
-                        {% endif %}
+{% endif %}
 
 
                         <!-- RATING -->

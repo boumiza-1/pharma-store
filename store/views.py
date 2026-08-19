@@ -1,9 +1,15 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth import authenticate, login, logout 
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 
-from .models import Product, Order, OrderItem, Category
+from .models import (
+    Product,
+    ProductVariant,
+    Order,
+    OrderItem,
+    Category,
+)
 
 
 def home(request):
@@ -63,11 +69,14 @@ def product_detail(request, product_id):
         id=product_id
     )
 
+    variants = product.variants.all()
+
     return render(
         request,
         "store/product_detail.html",
         {
             "product": product,
+            "variants": variants,
         }
     )
 
@@ -80,15 +89,78 @@ def add_to_cart(request, product_id):
 
     cart = request.session.get("cart", {})
 
-    product_id = str(product_id)
+    variant_id = request.POST.get("variant_id")
 
-    current_quantity = cart.get(
-        product_id,
-        0
-    )
+    # =========================================================
+    # PRODUIT AVEC VARIANTE
+    # =========================================================
 
-    if current_quantity < product.quantity:
-        cart[product_id] = current_quantity + 1
+    if variant_id:
+
+        try:
+            variant = ProductVariant.objects.get(
+                id=variant_id,
+                product=product
+            )
+        except ProductVariant.DoesNotExist:
+            return redirect(
+                "product_detail",
+                product_id=product_id
+            )
+
+        cart_key = f"{product_id}_{variant.id}"
+
+        current_item = cart.get(
+            cart_key,
+            {
+                "product_id": product_id,
+                "variant_id": variant.id,
+                "quantity": 0,
+            }
+        )
+
+        current_quantity = current_item.get(
+            "quantity",
+            0
+        )
+
+        if current_quantity < variant.quantity:
+
+            cart[cart_key] = {
+                "product_id": product_id,
+                "variant_id": variant.id,
+                "quantity": current_quantity + 1,
+            }
+
+    # =========================================================
+    # PRODUIT SANS VARIANTE
+    # =========================================================
+
+    else:
+
+        cart_key = str(product_id)
+
+        current_item = cart.get(
+            cart_key,
+            {
+                "product_id": product_id,
+                "variant_id": None,
+                "quantity": 0,
+            }
+        )
+
+        current_quantity = current_item.get(
+            "quantity",
+            0
+        )
+
+        if current_quantity < product.quantity:
+
+            cart[cart_key] = {
+                "product_id": product_id,
+                "variant_id": None,
+                "quantity": current_quantity + 1,
+            }
 
     request.session["cart"] = cart
     request.session.modified = True
@@ -97,34 +169,61 @@ def add_to_cart(request, product_id):
 
 
 def cart(request):
+
     cart_data = request.session.get(
         "cart",
         {}
     )
 
-    products = Product.objects.filter(
-        id__in=cart_data.keys()
-    )
-
     cart_items = []
     total = 0
 
-    for product in products:
+    for cart_key, cart_item in cart_data.items():
 
-        quantity = cart_data.get(
-            str(product.id),
+        product_id = cart_item.get(
+            "product_id"
+        )
+
+        variant_id = cart_item.get(
+            "variant_id"
+        )
+
+        quantity = cart_item.get(
+            "quantity",
             0
         )
+
+        try:
+            product = Product.objects.get(
+                id=product_id
+            )
+        except Product.DoesNotExist:
+            continue
+
+        variant = None
+
+        if variant_id:
+
+            try:
+                variant = ProductVariant.objects.get(
+                    id=variant_id,
+                    product=product
+                )
+            except ProductVariant.DoesNotExist:
+                continue
 
         subtotal = product.price * quantity
 
         total += subtotal
 
-        cart_items.append({
-            "product": product,
-            "quantity": quantity,
-            "subtotal": subtotal,
-        })
+        cart_items.append(
+            {
+                "product": product,
+                "variant": variant,
+                "quantity": quantity,
+                "subtotal": subtotal,
+            }
+        )
 
     return render(
         request,
@@ -143,16 +242,25 @@ def remove_from_cart(request, product_id):
         {}
     )
 
-    product_id = str(product_id)
+    variant_id = request.POST.get(
+        "variant_id"
+    )
 
-    if product_id in cart:
-        del cart[product_id]
+    if variant_id:
+
+        cart_key = f"{product_id}_{variant_id}"
+
+    else:
+
+        cart_key = str(product_id)
+
+    if cart_key in cart:
+        del cart[cart_key]
 
     request.session["cart"] = cart
     request.session.modified = True
 
     return redirect("cart")
-
 
 
 def checkout(request):
@@ -165,43 +273,126 @@ def checkout(request):
     if not cart_data:
         return redirect("cart")
 
-    products = Product.objects.filter(
-        id__in=cart_data.keys()
-    )
-
     cart_items = []
     total = 0
 
-    for product in products:
+    # =========================================================
+    # PREPARE CART
+    # =========================================================
 
-        quantity = cart_data.get(
-            str(product.id),
+    for cart_key, cart_item in cart_data.items():
+
+        product_id = cart_item.get(
+            "product_id"
+        )
+
+        variant_id = cart_item.get(
+            "variant_id"
+        )
+
+        quantity = cart_item.get(
+            "quantity",
             0
         )
 
-        if quantity > product.quantity:
-            return render(
-                request,
-                "store/checkout.html",
-                {
-                    "cart_items": cart_items,
-                    "total": total,
-                    "error": (
-                        f"Stock insuffisant "
-                        f"pour {product.name}."
-                    )
-                }
+        try:
+
+            product = Product.objects.get(
+                id=product_id
             )
+
+        except Product.DoesNotExist:
+
+            continue
+
+        variant = None
+
+        # =====================================================
+        # PRODUCT AVEC VARIANT
+        # =====================================================
+
+        if variant_id:
+
+            try:
+
+                variant = ProductVariant.objects.get(
+                    id=variant_id,
+                    product=product
+                )
+
+            except ProductVariant.DoesNotExist:
+
+                return render(
+                    request,
+                    "store/checkout.html",
+                    {
+                        "cart_items": cart_items,
+                        "total": total,
+                        "error": (
+                            f"La variante du produit "
+                            f"{product.name} n'existe plus."
+                        ),
+                    }
+                )
+
+            if quantity > variant.quantity:
+
+                return render(
+                    request,
+                    "store/checkout.html",
+                    {
+                        "cart_items": cart_items,
+                        "total": total,
+                        "error": (
+                            f"Stock insuffisant pour "
+                            f"{product.name} - "
+                            f"{variant.option_name}: "
+                            f"{variant.option_value}."
+                        ),
+                    }
+                )
+
+        # =====================================================
+        # PRODUIT SANS VARIANT
+        # =====================================================
+
+        else:
+
+            if quantity > product.quantity:
+
+                return render(
+                    request,
+                    "store/checkout.html",
+                    {
+                        "cart_items": cart_items,
+                        "total": total,
+                        "error": (
+                            f"Stock insuffisant pour "
+                            f"{product.name}."
+                        ),
+                    }
+                )
+
+        # =====================================================
+        # CALCUL
+        # =====================================================
 
         subtotal = product.price * quantity
 
         total += subtotal
 
-        cart_items.append({
-            "product": product,
-            "quantity": quantity,
-            "subtotal": subtotal,
-        })
+        cart_items.append(
+            {
+                "product": product,
+                "variant": variant,
+                "quantity": quantity,
+                "subtotal": subtotal,
+            }
+        )
+
+    # =========================================================
+    # POST
+    # =========================================================
 
     if request.method == "POST":
 
@@ -225,7 +416,16 @@ def checkout(request):
             ""
         ).strip()
 
-        if not customer_name or not phone or not address or not city:
+        # =====================================================
+        # VERIFICATION FORMULAIRE
+        # =====================================================
+
+        if (
+            not customer_name
+            or not phone
+            or not address
+            or not city
+        ):
 
             return render(
                 request,
@@ -234,21 +434,37 @@ def checkout(request):
                     "cart_items": cart_items,
                     "total": total,
                     "error": (
-                        "Veuillez remplir "
-                        "tous les champs."
-                    )
+                        "Veuillez remplir tous les champs."
+                    ),
                 }
             )
 
-        # Vérification finale du stock
-        for product in products:
+        # =====================================================
+        # VERIFICATION FINALE DU STOCK
+        # =====================================================
 
-            quantity = cart_data.get(
-                str(product.id),
+        for cart_key, cart_item in cart_data.items():
+
+            product_id = cart_item.get(
+                "product_id"
+            )
+
+            variant_id = cart_item.get(
+                "variant_id"
+            )
+
+            quantity = cart_item.get(
+                "quantity",
                 0
             )
 
-            if quantity > product.quantity:
+            try:
+
+                product = Product.objects.get(
+                    id=product_id
+                )
+
+            except Product.DoesNotExist:
 
                 return render(
                     request,
@@ -257,51 +473,187 @@ def checkout(request):
                         "cart_items": cart_items,
                         "total": total,
                         "error": (
-                            f"Stock insuffisant "
-                            f"pour {product.name}."
-                        )
+                            "Un produit du panier "
+                            "n'existe plus."
+                        ),
                     }
                 )
 
-        # Création de la commande
+            if variant_id:
+
+                try:
+
+                    variant = ProductVariant.objects.get(
+                        id=variant_id,
+                        product=product
+                    )
+
+                except ProductVariant.DoesNotExist:
+
+                    return render(
+                        request,
+                        "store/checkout.html",
+                        {
+                            "cart_items": cart_items,
+                            "total": total,
+                            "error": (
+                                f"La variante de "
+                                f"{product.name} "
+                                f"n'existe plus."
+                            ),
+                        }
+                    )
+
+                if quantity > variant.quantity:
+
+                    return render(
+                        request,
+                        "store/checkout.html",
+                        {
+                            "cart_items": cart_items,
+                            "total": total,
+                            "error": (
+                                f"Stock insuffisant pour "
+                                f"{product.name} - "
+                                f"{variant.option_name}: "
+                                f"{variant.option_value}."
+                            ),
+                        }
+                    )
+
+            else:
+
+                if quantity > product.quantity:
+
+                    return render(
+                        request,
+                        "store/checkout.html",
+                        {
+                            "cart_items": cart_items,
+                            "total": total,
+                            "error": (
+                                f"Stock insuffisant pour "
+                                f"{product.name}."
+                            ),
+                        }
+                    )
+
+        # =====================================================
+        # CREER COMMANDE
+        # =====================================================
+
         order = Order.objects.create(
-    user=request.user if request.user.is_authenticated else None,
-    customer_name=customer_name,
-    phone=phone,
-    address=address,
-    city=city,
-    total=total,
-)
 
-        # Création des lignes + diminution du stock
-        for product in products:
+            user=(
+                request.user
+                if request.user.is_authenticated
+                else None
+            ),
 
-            quantity = cart_data.get(
-                str(product.id),
+            customer_name=customer_name,
+
+            phone=phone,
+
+            address=address,
+
+            city=city,
+
+            total=total,
+        )
+
+        # =====================================================
+        # ORDER ITEMS + DIMINUTION STOCK
+        # =====================================================
+
+        for cart_key, cart_item in cart_data.items():
+
+            product_id = cart_item.get(
+                "product_id"
+            )
+
+            variant_id = cart_item.get(
+                "variant_id"
+            )
+
+            quantity = cart_item.get(
+                "quantity",
                 0
             )
 
+            product = Product.objects.get(
+                id=product_id
+            )
+
+            variant = None
+
+            if variant_id:
+
+                variant = ProductVariant.objects.get(
+                    id=variant_id,
+                    product=product
+                )
+
             OrderItem.objects.create(
+
                 order=order,
+
                 product=product,
+
+                variant=variant,
+
                 quantity=quantity,
+
                 price=product.price,
             )
 
-            product.quantity -= quantity
+            # =================================================
+            # DIMINUER STOCK VARIANTE
+            # =================================================
 
-            product.save(
-                update_fields=["quantity"]
-            )
+            if variant:
 
-        # Vider le panier
+                variant.quantity -= quantity
+
+                variant.save(
+                    update_fields=[
+                        "quantity"
+                    ]
+                )
+
+            # =================================================
+            # DIMINUER STOCK PRODUIT
+            # =================================================
+
+            else:
+
+                product.quantity -= quantity
+
+                product.save(
+                    update_fields=[
+                        "quantity"
+                    ]
+                )
+
+        # =====================================================
+        # VIDER PANIER
+        # =====================================================
+
         request.session["cart"] = {}
+
         request.session.modified = True
+
+        # =====================================================
+        # SUCCESS
+        # =====================================================
 
         return redirect(
             "order_success",
             order_id=order.id
         )
+
+    # =========================================================
+    # GET
+    # =========================================================
 
     return render(
         request,
@@ -356,7 +708,12 @@ def register(request):
             ""
         )
 
-        if not username or not email or not password or not password2:
+        if (
+            not username
+            or not email
+            or not password
+            or not password2
+        ):
 
             return render(
                 request,
@@ -422,7 +779,9 @@ def register(request):
             user
         )
 
-        return redirect("product_list")
+        return redirect(
+            "product_list"
+        )
 
     return render(
         request,
@@ -460,7 +819,9 @@ def login_view(request):
                 user
             )
 
-            return redirect("product_list")
+            return redirect(
+                "product_list"
+            )
 
         return render(
             request,
@@ -484,7 +845,9 @@ def logout_view(request):
     if request.method == "POST":
         logout(request)
 
-    return redirect("product_list")
+    return redirect(
+        "product_list"
+    )
 
 
 @login_required
@@ -506,6 +869,7 @@ def my_orders(request):
 
 
 def creator(request):
+
     return render(
         request,
         "store/creator.html"
