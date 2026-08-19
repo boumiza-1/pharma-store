@@ -39,14 +39,17 @@ class ProductVariantInline(admin.TabularInline):
 
     extra = 1
 
-    fields = (
+    exclude = (
         "option_name",
+    )
+
+    fields = (
         "option_value",
         "quantity",
     )
 
     verbose_name = "Variante"
-    verbose_name_plural = "Variantes / Pointures / Tailles"
+    verbose_name_plural = "Tailles / Pointures / Variantes"
 
 
 # =========================================================
@@ -60,6 +63,7 @@ class ProductAdmin(admin.ModelAdmin):
         "name",
         "category",
         "price",
+        "variant_type",
         "quantity",
         "total_stock",
         "has_variants",
@@ -68,12 +72,24 @@ class ProductAdmin(admin.ModelAdmin):
 
     list_filter = (
         "category",
+        "variant_type",
         "created_at",
     )
 
     search_fields = (
         "name",
         "description",
+    )
+
+    fields = (
+        "category",
+        "name",
+        "description",
+        "price",
+        "variant_type",
+        "quantity",
+        "delivery",
+        "image",
     )
 
     inlines = [

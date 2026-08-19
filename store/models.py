@@ -27,6 +27,14 @@ class Category(models.Model):
 
 class Product(models.Model):
 
+    VARIANT_TYPE_CHOICES = [
+        ("", "Aucune variante"),
+        ("Taille", "Taille"),
+        ("Pointure", "Pointure"),
+        ("Couleur", "Couleur"),
+        ("Autre", "Autre"),
+    ]
+
     category = models.ForeignKey(
         Category,
         on_delete=models.SET_NULL,
@@ -49,13 +57,26 @@ class Product(models.Model):
     )
 
     # -----------------------------------------------------
-    # STOCK TOTAL
-    #
-    # Utilisé uniquement quand le produit N'A PAS
-    # de variantes.
+    # TYPE DE VARIANTE
     #
     # Exemple:
-    # Sac = 15
+    # Taille
+    # Pointure
+    # Couleur
+    # -----------------------------------------------------
+
+    variant_type = models.CharField(
+        max_length=100,
+        choices=VARIANT_TYPE_CHOICES,
+        blank=True,
+        default=""
+    )
+
+    # -----------------------------------------------------
+    # STOCK TOTAL
+    #
+    # Utilisé uniquement quand le produit n'a pas
+    # de variantes.
     # -----------------------------------------------------
 
     quantity = models.PositiveIntegerField(
@@ -96,18 +117,13 @@ class Product(models.Model):
 
     # -----------------------------------------------------
     # Stock disponible
-    #
-    # Sans variantes:
-    #     Product.quantity
-    #
-    # Avec variantes:
-    #     somme des quantities des variantes
     # -----------------------------------------------------
 
     @property
     def total_stock(self):
 
         if self.has_variants:
+
             return sum(
                 variant.quantity
                 for variant in self.variants.all()
@@ -125,6 +141,7 @@ class Product(models.Model):
     # -----------------------------------------------------
 
     def __str__(self):
+
         return self.name
 
 
@@ -153,6 +170,7 @@ class ProductImage(models.Model):
         ordering = ["created_at"]
 
     def __str__(self):
+
         return f"Image - {self.product.name}"
 
 
@@ -168,35 +186,48 @@ class ProductVariant(models.Model):
         related_name="variants"
     )
 
-    # Exemple:
-    # Taille
-    # Pointure
-    # Couleur
+    # -----------------------------------------------------
+    # ANCIEN CHAMP CONSERVÉ POUR COMPATIBILITÉ DATABASE
+    #
+    # Il n'est plus demandé dans Admin.
+    # Il est rempli automatiquement depuis Product.variant_type
+    # -----------------------------------------------------
 
     option_name = models.CharField(
-        max_length=100
+        max_length=100,
+        blank=True,
+        editable=False
     )
 
+    # -----------------------------------------------------
+    # VALEUR DE LA VARIANTE
+    #
     # Exemple:
     # S
     # M
     # L
     # XL
+    #
+    # ou:
     # 41
     # 42
-    # Noir
-    # Rouge
+    # 43
+    # -----------------------------------------------------
 
     option_value = models.CharField(
         max_length=100
     )
 
-    # Stock de cette variante
+    # -----------------------------------------------------
+    # STOCK DE CETTE VARIANTE
+    # -----------------------------------------------------
+
     quantity = models.PositiveIntegerField(
         default=0
     )
 
     class Meta:
+
         ordering = ["id"]
 
         constraints = [
@@ -210,11 +241,30 @@ class ProductVariant(models.Model):
             )
         ]
 
+    def save(self, *args, **kwargs):
+
+        # Remplir automatiquement option_name
+        if self.product:
+
+            if self.product.variant_type:
+
+                self.option_name = (
+                    self.product.variant_type
+                )
+
+        super().save(*args, **kwargs)
+
     def __str__(self):
+
+        variant_name = (
+            self.option_name
+            or self.product.variant_type
+            or "Variante"
+        )
 
         return (
             f"{self.product.name} - "
-            f"{self.option_name}: "
+            f"{variant_name}: "
             f"{self.option_value} "
             f"({self.quantity})"
         )
@@ -302,12 +352,6 @@ class OrderItem(models.Model):
         related_name="order_items"
     )
 
-    # -----------------------------------------------------
-    # Variante choisie par le client
-    #
-    # Peut être NULL pour les produits sans variantes.
-    # -----------------------------------------------------
-
     variant = models.ForeignKey(
         ProductVariant,
         on_delete=models.PROTECT,
@@ -329,9 +373,15 @@ class OrderItem(models.Model):
 
         if self.variant:
 
+            variant_name = (
+                self.variant.option_name
+                or self.product.variant_type
+                or "Variante"
+            )
+
             return (
                 f"{self.product.name} - "
-                f"{self.variant.option_name}: "
+                f"{variant_name}: "
                 f"{self.variant.option_value} x "
                 f"{self.quantity}"
             )

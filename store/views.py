@@ -12,8 +12,14 @@ from .models import (
 )
 
 
+# =========================================================
+# HOME
+# =========================================================
+
 def home(request):
+
     products = Product.objects.all().order_by("-created_at")[:8]
+
     categories = Category.objects.all().order_by("name")
 
     return render(
@@ -26,18 +32,34 @@ def home(request):
     )
 
 
-def product_list(request):
-    search = request.GET.get("search", "").strip()
-    category_id = request.GET.get("category", "").strip()
+# =========================================================
+# PRODUCT LIST
+# =========================================================
 
-    products = Product.objects.all().order_by("-created_at")
+def product_list(request):
+
+    search = request.GET.get(
+        "search",
+        ""
+    ).strip()
+
+    category_id = request.GET.get(
+        "category",
+        ""
+    ).strip()
+
+    products = Product.objects.all().order_by(
+        "-created_at"
+    )
 
     if search:
+
         products = products.filter(
             name__icontains=search
         )
 
     if category_id:
+
         products = products.filter(
             category_id=category_id
         )
@@ -51,8 +73,15 @@ def product_list(request):
     )
 
 
+# =========================================================
+# CATEGORY LIST
+# =========================================================
+
 def category_list(request):
-    categories = Category.objects.all().order_by("name")
+
+    categories = Category.objects.all().order_by(
+        "name"
+    )
 
     return render(
         request,
@@ -63,7 +92,12 @@ def category_list(request):
     )
 
 
+# =========================================================
+# PRODUCT DETAIL
+# =========================================================
+
 def product_detail(request, product_id):
+
     product = get_object_or_404(
         Product,
         id=product_id
@@ -81,34 +115,64 @@ def product_detail(request, product_id):
     )
 
 
+# =========================================================
+# ADD TO CART
+# =========================================================
+
 def add_to_cart(request, product_id):
+
     product = get_object_or_404(
         Product,
         id=product_id
     )
 
-    cart = request.session.get("cart", {})
+    cart = request.session.get(
+        "cart",
+        {}
+    )
 
-    variant_id = request.POST.get("variant_id")
+    variant_id = request.POST.get(
+        "variant_id"
+    )
 
-    # =========================================================
+    requested_quantity = request.POST.get(
+        "quantity",
+        "1"
+    )
+
+    try:
+        requested_quantity = int(
+            requested_quantity
+        )
+    except (ValueError, TypeError):
+        requested_quantity = 1
+
+    if requested_quantity < 1:
+        requested_quantity = 1
+
+    # =====================================================
     # PRODUIT AVEC VARIANTE
-    # =========================================================
+    # =====================================================
 
     if variant_id:
 
         try:
+
             variant = ProductVariant.objects.get(
                 id=variant_id,
                 product=product
             )
+
         except ProductVariant.DoesNotExist:
+
             return redirect(
                 "product_detail",
                 product_id=product_id
             )
 
-        cart_key = f"{product_id}_{variant.id}"
+        cart_key = (
+            f"{product_id}_{variant.id}"
+        )
 
         current_item = cart.get(
             cart_key,
@@ -124,21 +188,36 @@ def add_to_cart(request, product_id):
             0
         )
 
-        if current_quantity < variant.quantity:
+        new_quantity = (
+            current_quantity
+            + requested_quantity
+        )
+
+        if new_quantity <= variant.quantity:
 
             cart[cart_key] = {
                 "product_id": product_id,
                 "variant_id": variant.id,
-                "quantity": current_quantity + 1,
+                "quantity": new_quantity,
             }
 
-    # =========================================================
+        else:
+
+            cart[cart_key] = {
+                "product_id": product_id,
+                "variant_id": variant.id,
+                "quantity": variant.quantity,
+            }
+
+    # =====================================================
     # PRODUIT SANS VARIANTE
-    # =========================================================
+    # =====================================================
 
     else:
 
-        cart_key = str(product_id)
+        cart_key = str(
+            product_id
+        )
 
         current_item = cart.get(
             cart_key,
@@ -154,19 +233,37 @@ def add_to_cart(request, product_id):
             0
         )
 
-        if current_quantity < product.quantity:
+        new_quantity = (
+            current_quantity
+            + requested_quantity
+        )
+
+        if new_quantity <= product.quantity:
 
             cart[cart_key] = {
                 "product_id": product_id,
                 "variant_id": None,
-                "quantity": current_quantity + 1,
+                "quantity": new_quantity,
+            }
+
+        else:
+
+            cart[cart_key] = {
+                "product_id": product_id,
+                "variant_id": None,
+                "quantity": product.quantity,
             }
 
     request.session["cart"] = cart
+
     request.session.modified = True
 
     return redirect("cart")
 
+
+# =========================================================
+# CART
+# =========================================================
 
 def cart(request):
 
@@ -176,6 +273,7 @@ def cart(request):
     )
 
     cart_items = []
+
     total = 0
 
     for cart_key, cart_item in cart_data.items():
@@ -194,10 +292,13 @@ def cart(request):
         )
 
         try:
+
             product = Product.objects.get(
                 id=product_id
             )
+
         except Product.DoesNotExist:
+
             continue
 
         variant = None
@@ -205,14 +306,19 @@ def cart(request):
         if variant_id:
 
             try:
+
                 variant = ProductVariant.objects.get(
                     id=variant_id,
                     product=product
                 )
+
             except ProductVariant.DoesNotExist:
+
                 continue
 
-        subtotal = product.price * quantity
+        subtotal = (
+            product.price * quantity
+        )
 
         total += subtotal
 
@@ -235,7 +341,14 @@ def cart(request):
     )
 
 
-def remove_from_cart(request, product_id):
+# =========================================================
+# REMOVE FROM CART
+# =========================================================
+
+def remove_from_cart(
+    request,
+    product_id
+):
 
     cart = request.session.get(
         "cart",
@@ -248,20 +361,30 @@ def remove_from_cart(request, product_id):
 
     if variant_id:
 
-        cart_key = f"{product_id}_{variant_id}"
+        cart_key = (
+            f"{product_id}_{variant_id}"
+        )
 
     else:
 
-        cart_key = str(product_id)
+        cart_key = str(
+            product_id
+        )
 
     if cart_key in cart:
+
         del cart[cart_key]
 
     request.session["cart"] = cart
+
     request.session.modified = True
 
     return redirect("cart")
 
+
+# =========================================================
+# CHECKOUT
+# =========================================================
 
 def checkout(request):
 
@@ -271,14 +394,16 @@ def checkout(request):
     )
 
     if not cart_data:
+
         return redirect("cart")
 
     cart_items = []
+
     total = 0
 
-    # =========================================================
+    # =====================================================
     # PREPARE CART
-    # =========================================================
+    # =====================================================
 
     for cart_key, cart_item in cart_data.items():
 
@@ -307,9 +432,9 @@ def checkout(request):
 
         variant = None
 
-        # =====================================================
-        # PRODUCT AVEC VARIANT
-        # =====================================================
+        # =================================================
+        # VARIANTE
+        # =================================================
 
         if variant_id:
 
@@ -330,7 +455,8 @@ def checkout(request):
                         "total": total,
                         "error": (
                             f"La variante du produit "
-                            f"{product.name} n'existe plus."
+                            f"{product.name} "
+                            f"n'existe plus."
                         ),
                     }
                 )
@@ -346,15 +472,14 @@ def checkout(request):
                         "error": (
                             f"Stock insuffisant pour "
                             f"{product.name} - "
-                            f"{variant.option_name}: "
                             f"{variant.option_value}."
                         ),
                     }
                 )
 
-        # =====================================================
-        # PRODUIT SANS VARIANT
-        # =====================================================
+        # =================================================
+        # SANS VARIANTE
+        # =================================================
 
         else:
 
@@ -373,11 +498,9 @@ def checkout(request):
                     }
                 )
 
-        # =====================================================
-        # CALCUL
-        # =====================================================
-
-        subtotal = product.price * quantity
+        subtotal = (
+            product.price * quantity
+        )
 
         total += subtotal
 
@@ -390,9 +513,9 @@ def checkout(request):
             }
         )
 
-    # =========================================================
+    # =====================================================
     # POST
-    # =========================================================
+    # =====================================================
 
     if request.method == "POST":
 
@@ -416,10 +539,6 @@ def checkout(request):
             ""
         ).strip()
 
-        # =====================================================
-        # VERIFICATION FORMULAIRE
-        # =====================================================
-
         if (
             not customer_name
             or not phone
@@ -434,14 +553,15 @@ def checkout(request):
                     "cart_items": cart_items,
                     "total": total,
                     "error": (
-                        "Veuillez remplir tous les champs."
+                        "Veuillez remplir "
+                        "tous les champs."
                     ),
                 }
             )
 
-        # =====================================================
-        # VERIFICATION FINALE DU STOCK
-        # =====================================================
+        # =================================================
+        # FINAL STOCK CHECK
+        # =================================================
 
         for cart_key, cart_item in cart_data.items():
 
@@ -515,7 +635,6 @@ def checkout(request):
                             "error": (
                                 f"Stock insuffisant pour "
                                 f"{product.name} - "
-                                f"{variant.option_name}: "
                                 f"{variant.option_value}."
                             ),
                         }
@@ -538,9 +657,9 @@ def checkout(request):
                         }
                     )
 
-        # =====================================================
-        # CREER COMMANDE
-        # =====================================================
+        # =================================================
+        # CREATE ORDER
+        # =================================================
 
         order = Order.objects.create(
 
@@ -561,9 +680,9 @@ def checkout(request):
             total=total,
         )
 
-        # =====================================================
-        # ORDER ITEMS + DIMINUTION STOCK
-        # =====================================================
+        # =================================================
+        # ORDER ITEMS + STOCK
+        # =================================================
 
         for cart_key, cart_item in cart_data.items():
 
@@ -607,7 +726,7 @@ def checkout(request):
             )
 
             # =================================================
-            # DIMINUER STOCK VARIANTE
+            # VARIANT STOCK
             # =================================================
 
             if variant:
@@ -621,7 +740,7 @@ def checkout(request):
                 )
 
             # =================================================
-            # DIMINUER STOCK PRODUIT
+            # PRODUCT STOCK
             # =================================================
 
             else:
@@ -634,26 +753,22 @@ def checkout(request):
                     ]
                 )
 
-        # =====================================================
-        # VIDER PANIER
-        # =====================================================
+        # =================================================
+        # CLEAR CART
+        # =================================================
 
         request.session["cart"] = {}
 
         request.session.modified = True
-
-        # =====================================================
-        # SUCCESS
-        # =====================================================
 
         return redirect(
             "order_success",
             order_id=order.id
         )
 
-    # =========================================================
+    # =====================================================
     # GET
-    # =========================================================
+    # =====================================================
 
     return render(
         request,
@@ -665,7 +780,14 @@ def checkout(request):
     )
 
 
-def order_success(request, order_id):
+# =========================================================
+# ORDER SUCCESS
+# =========================================================
+
+def order_success(
+    request,
+    order_id
+):
 
     order = get_object_or_404(
         Order,
@@ -681,10 +803,17 @@ def order_success(request, order_id):
     )
 
 
+# =========================================================
+# REGISTER
+# =========================================================
+
 def register(request):
 
     if request.user.is_authenticated:
-        return redirect("product_list")
+
+        return redirect(
+            "product_list"
+        )
 
     if request.method == "POST":
 
@@ -789,10 +918,17 @@ def register(request):
     )
 
 
+# =========================================================
+# LOGIN
+# =========================================================
+
 def login_view(request):
 
     if request.user.is_authenticated:
-        return redirect("product_list")
+
+        return redirect(
+            "product_list"
+        )
 
     if request.method == "POST":
 
@@ -840,15 +976,24 @@ def login_view(request):
     )
 
 
+# =========================================================
+# LOGOUT
+# =========================================================
+
 def logout_view(request):
 
     if request.method == "POST":
+
         logout(request)
 
     return redirect(
         "product_list"
     )
 
+
+# =========================================================
+# MY ORDERS
+# =========================================================
 
 @login_required
 def my_orders(request):
@@ -867,6 +1012,10 @@ def my_orders(request):
         }
     )
 
+
+# =========================================================
+# CREATOR
+# =========================================================
 
 def creator(request):
 
