@@ -8,7 +8,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-```
 <!-- Meta Pixel Code -->
 <script>
 !function(f,b,e,v,n,t,s)
@@ -100,34 +99,31 @@ fbq('track', 'PageView');
         gap: 20px;
     }
 
-    .logo {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        font-size: 23px;
-        font-weight: bold;
-        color: #00040a;
-        white-space: nowrap;
-    }
+   .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 23px;
+    font-weight: bold;
+    color: #00040a;
+    white-space: nowrap;
+    text-decoration: none;
+}
 
-    .logo-icon {
-        width: 42px;
-        height: 42px;
-        border-radius: 12px;
-        background: #021a1a;
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 22px;
-    }
+.logo-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    object-fit: contain;
+    display: block;
+}
 
-    .nav-menu {
-        display: flex;
-        align-items: center;
-        gap: 25px;
-        list-style: none;
-    }
+.nav-menu {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    list-style: none;
+}
 
     .nav-menu a {
         color: #000303;
@@ -301,7 +297,7 @@ fbq('track', 'PageView');
 </style>
 
 {% block extra_css %}{% endblock %}
-```
+
 
 </head>
 
@@ -309,14 +305,18 @@ fbq('track', 'PageView');
 
 <header class="navbar">
 
-```
+
 <div class="nav-container">
 
     <!-- LOGO -->
-    <a href="{% url 'product_list' %}" class="logo">
-        <span class="logo-icon"></span>
-        Sportifano
-    </a>
+   <a href="{% url 'product_list' %}" class="logo">
+    <img
+        src="{% static 'images/sportif.png' %}"
+        alt="Sportifano"
+        class="logo-icon"
+    >
+    <span>Sportifano</span>
+</a>
 
     <!-- MENU -->
     <ul class="nav-menu">
@@ -428,26 +428,26 @@ fbq('track', 'PageView');
     </div>
 
 </div>
-```
+
 
 </header>
 
 <main>
 
-```
+
 <div class="page-container">
 
     {% block content %}
     {% endblock %}
 
 </div>
-```
+
 
 </main>
 
 <footer>
 
-```
+
 <div class="footer-container">
 
     <div class="footer-brand">
@@ -526,7 +526,7 @@ fbq('track', 'PageView');
 <div class="footer-bottom">
     © 2026 Sportifano Store — Tous droits réservés, amine boumiza.
 </div>
-```
+
 
 </footer>
 
