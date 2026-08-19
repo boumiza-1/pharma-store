@@ -264,41 +264,45 @@ def add_to_cart(request, product_id):
 # =========================================================
 # CART
 # =========================================================
-
 def cart(request):
 
-    cart_data = request.session.get(
-        "cart",
-        {}
-    )
+    cart_data = request.session.get("cart", {})
 
     cart_items = []
-
     total = 0
 
-    for cart_key, cart_item in cart_data.items():
+    if not isinstance(cart_data, dict):
+        cart_data = {}
 
-        product_id = cart_item.get(
-            "product_id"
-        )
+    for cart_key, item in cart_data.items():
 
-        variant_id = cart_item.get(
-            "variant_id"
-        )
+        if not isinstance(item, dict):
+            continue
 
-        quantity = cart_item.get(
-            "quantity",
-            0
-        )
+        product_id = item.get("product_id")
+        variant_id = item.get("variant_id")
+        quantity = item.get("quantity", 1)
 
         try:
-
             product = Product.objects.get(
-                id=product_id
+                id=int(product_id)
             )
+        except (
+            Product.DoesNotExist,
+            TypeError,
+            ValueError
+        ):
+            continue
 
-        except Product.DoesNotExist:
+        try:
+            quantity = int(quantity)
+        except (
+            TypeError,
+            ValueError
+        ):
+            continue
 
+        if quantity <= 0:
             continue
 
         variant = None
@@ -306,30 +310,40 @@ def cart(request):
         if variant_id:
 
             try:
-
                 variant = ProductVariant.objects.get(
-                    id=variant_id,
+                    id=int(variant_id),
                     product=product
                 )
-
-            except ProductVariant.DoesNotExist:
-
+            except (
+                ProductVariant.DoesNotExist,
+                TypeError,
+                ValueError
+            ):
                 continue
 
-        subtotal = (
-            product.price * quantity
-        )
+        # Stock
+        if variant:
+            stock = variant.quantity
+        else:
+            stock = product.quantity
+
+        if stock <= 0:
+            continue
+
+        if quantity > stock:
+            quantity = stock
+
+        # Price
+        subtotal = product.price * quantity
 
         total += subtotal
 
-        cart_items.append(
-            {
-                "product": product,
-                "variant": variant,
-                "quantity": quantity,
-                "subtotal": subtotal,
-            }
-        )
+        cart_items.append({
+            "product": product,
+            "variant": variant,
+            "quantity": quantity,
+            "subtotal": subtotal,
+        })
 
     return render(
         request,
@@ -1018,6 +1032,7 @@ def my_orders(request):
 # =========================================================
 
 def creator(request):
+
 
     return render(
         request,
