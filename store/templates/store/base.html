@@ -5,9 +5,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Meta Pixel Code -->
     <script>
@@ -25,49 +22,43 @@
     </script>
 
     <noscript>
-        <img
-            height="1"
-            width="1"
-            style="display:none"
-            src="https://www.facebook.com/tr?id=4194183017381075&ev=PageView&noscript=1"
-        />
+        <img height="1" width="1" style="display:none"
+        src="https://www.facebook.com/tr?id=4194183017381075&ev=PageView&noscript=1"/>
     </noscript>
     <!-- End Meta Pixel Code -->
 
     <title>{% block title %}Sportifano Store{% endblock %}</title>
-    <title>{% block title %}Sportifano Store{% endblock %}</title>
 
     <style>
         .messenger-float {
-    position: fixed;
+            position: fixed;
+            right: 22px;
+            bottom: 22px;
+            width: 58px;
+            height: 58px;
 
-    right: 22px;
-    bottom: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
 
-    width: 58px;
-    height: 58px;
+            border-radius: 50%;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+            background: #000000;
+            color: white;
 
-    border-radius: 50%;
+            font-size: 27px;
 
-    background: #000000;
-    color: white;
+            box-shadow: 0 8px 25px rgba(0, 255, 255, 0.815);
 
-    font-size: 27px;
+            z-index: 9999;
 
-    box-shadow: 0 8px 25px rgba(0, 255, 255, 0.815);
+            transition: .2s ease;
+        }
 
-    z-index: 9999;
+        .messenger-float:hover {
+            transform: translateY(-3px) scale(1.05);
+        }
 
-    transition: .2s ease;
-}
-
-.messenger-float:hover {
-    transform: translateY(-3px) scale(1.05);
-}
         * {
             box-sizing: border-box;
             margin: 0;
@@ -316,7 +307,7 @@
 
         <!-- LOGO -->
         <a href="{% url 'product_list' %}" class="logo">
-            <span class="logo-icon"> </span>
+            <span class="logo-icon"></span>
             Sportifano
         </a>
 
@@ -325,8 +316,8 @@
 
             <li>
                 <a href="{% url 'home' %}">
-    Accueil
-</a>
+                    Accueil
+                </a>
             </li>
 
             <li>
@@ -340,7 +331,8 @@
                     Panier
                 </a>
             </li>
-             <li>
+
+            <li>
                 <a href="{% url 'creator' %}">
                     creator
                 </a>
@@ -364,14 +356,16 @@
             </form>
 
         </div>
-<a
-    href="https://m.me/https://www.facebook.com/Princotn1/"
-    target="_blank"
-    class="messenger-float"
-    aria-label="Contacter sur Messenger"
->
-    💬
-</a>
+
+        <a
+            href="https://m.me/Princotn1/"
+            target="_blank"
+            class="messenger-float"
+            aria-label="Contacter sur Messenger"
+        >
+            💬
+        </a>
+
         <!-- ACTIONS -->
         <div class="nav-actions">
 
@@ -393,6 +387,7 @@
                     action="{% url 'logout' %}"
                     style="display: inline;"
                 >
+
                     {% csrf_token %}
 
                     <button
@@ -401,6 +396,7 @@
                     >
                         🚪 Déconnexion
                     </button>
+
                 </form>
 
             {% else %}
@@ -508,7 +504,7 @@
                 📞 Téléphone
             </a>
 
-            <a href="amineboumiza2011@gmail.com">
+            <a href="mailto:amineboumiza2011@gmail.com">
                 📧 Email
             </a>
 
@@ -520,8 +516,9 @@
 
     </div>
 
+
     <div class="footer-bottom">
-        © 2026 Sportifano Store — Tous droits réservés , amine boumiza.
+        © 2026 Sportifano Store — Tous droits réservés, amine boumiza.
     </div>
 
 </footer>
