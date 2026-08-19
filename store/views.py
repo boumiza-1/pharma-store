@@ -13,6 +13,13 @@ from .models import (
 
 
 # =========================================================
+# DELIVERY
+# =========================================================
+
+DELIVERY_FEE = 8
+
+
+# =========================================================
 # HOME
 # =========================================================
 
@@ -131,6 +138,9 @@ def add_to_cart(request, product_id):
         {}
     )
 
+    if not isinstance(cart, dict):
+        cart = {}
+
     variant_id = request.POST.get(
         "variant_id"
     )
@@ -141,17 +151,21 @@ def add_to_cart(request, product_id):
     )
 
     try:
+
         requested_quantity = int(
             requested_quantity
         )
+
     except (ValueError, TypeError):
+
         requested_quantity = 1
 
     if requested_quantity < 1:
+
         requested_quantity = 1
 
     # =====================================================
-    # PRODUIT AVEC VARIANTE
+    # PRODUCT WITH VARIANT
     # =====================================================
 
     if variant_id:
@@ -188,29 +202,37 @@ def add_to_cart(request, product_id):
             0
         )
 
+        try:
+
+            current_quantity = int(
+                current_quantity
+            )
+
+        except (ValueError, TypeError):
+
+            current_quantity = 0
+
         new_quantity = (
             current_quantity
             + requested_quantity
         )
 
-        if new_quantity <= variant.quantity:
+        if new_quantity > variant.quantity:
 
-            cart[cart_key] = {
-                "product_id": product_id,
-                "variant_id": variant.id,
-                "quantity": new_quantity,
-            }
+            new_quantity = variant.quantity
 
-        else:
+        cart[cart_key] = {
 
-            cart[cart_key] = {
-                "product_id": product_id,
-                "variant_id": variant.id,
-                "quantity": variant.quantity,
-            }
+            "product_id": product_id,
+
+            "variant_id": variant.id,
+
+            "quantity": new_quantity,
+
+        }
 
     # =====================================================
-    # PRODUIT SANS VARIANTE
+    # PRODUCT WITHOUT VARIANT
     # =====================================================
 
     else:
@@ -233,26 +255,34 @@ def add_to_cart(request, product_id):
             0
         )
 
+        try:
+
+            current_quantity = int(
+                current_quantity
+            )
+
+        except (ValueError, TypeError):
+
+            current_quantity = 0
+
         new_quantity = (
             current_quantity
             + requested_quantity
         )
 
-        if new_quantity <= product.quantity:
+        if new_quantity > product.quantity:
 
-            cart[cart_key] = {
-                "product_id": product_id,
-                "variant_id": None,
-                "quantity": new_quantity,
-            }
+            new_quantity = product.quantity
 
-        else:
+        cart[cart_key] = {
 
-            cart[cart_key] = {
-                "product_id": product_id,
-                "variant_id": None,
-                "quantity": product.quantity,
-            }
+            "product_id": product_id,
+
+            "variant_id": None,
+
+            "quantity": new_quantity,
+
+        }
 
     request.session["cart"] = cart
 
@@ -264,86 +294,138 @@ def add_to_cart(request, product_id):
 # =========================================================
 # CART
 # =========================================================
+
 def cart(request):
 
-    cart_data = request.session.get("cart", {})
+    cart_data = request.session.get(
+        "cart",
+        {}
+    )
 
     cart_items = []
+
     total = 0
 
     if not isinstance(cart_data, dict):
+
         cart_data = {}
+
+        request.session["cart"] = {}
+
+        request.session.modified = True
 
     for cart_key, item in cart_data.items():
 
         if not isinstance(item, dict):
+
             continue
 
-        product_id = item.get("product_id")
-        variant_id = item.get("variant_id")
-        quantity = item.get("quantity", 1)
+        product_id = item.get(
+            "product_id"
+        )
+
+        variant_id = item.get(
+            "variant_id"
+        )
+
+        quantity = item.get(
+            "quantity",
+            1
+        )
 
         try:
-            product = Product.objects.get(
-                id=int(product_id)
+
+            product_id = int(
+                product_id
             )
-        except (
-            Product.DoesNotExist,
-            TypeError,
-            ValueError
-        ):
-            continue
 
-        try:
-            quantity = int(quantity)
-        except (
-            TypeError,
-            ValueError
-        ):
+            quantity = int(
+                quantity
+            )
+
+        except (TypeError, ValueError):
+
             continue
 
         if quantity <= 0:
+
             continue
+
+        # =================================================
+        # PRODUCT
+        # =================================================
+
+        try:
+
+            product = Product.objects.get(
+                id=product_id
+            )
+
+        except Product.DoesNotExist:
+
+            continue
+
+        # =================================================
+        # VARIANT
+        # =================================================
 
         variant = None
 
         if variant_id:
 
             try:
+
                 variant = ProductVariant.objects.get(
                     id=int(variant_id),
                     product=product
                 )
+
             except (
                 ProductVariant.DoesNotExist,
                 TypeError,
                 ValueError
             ):
+
                 continue
 
-        # Stock
+        # =================================================
+        # STOCK
+        # =================================================
+
         if variant:
+
             stock = variant.quantity
+
         else:
+
             stock = product.quantity
 
         if stock <= 0:
+
             continue
 
         if quantity > stock:
+
             quantity = stock
 
-        # Price
-        subtotal = product.price * quantity
+        # =================================================
+        # SUBTOTAL
+        # =================================================
+
+        subtotal = (
+            product.price * quantity
+        )
 
         total += subtotal
 
-        cart_items.append({
-            "product": product,
-            "variant": variant,
-            "quantity": quantity,
-            "subtotal": subtotal,
-        })
+        cart_items.append(
+            {
+                "product": product,
+                "variant": variant,
+                "quantity": quantity,
+                "subtotal": subtotal,
+            }
+        )
 
     return render(
         request,
@@ -368,6 +450,10 @@ def remove_from_cart(
         "cart",
         {}
     )
+
+    if not isinstance(cart, dict):
+
+        cart = {}
 
     variant_id = request.POST.get(
         "variant_id"
@@ -407,6 +493,10 @@ def checkout(request):
         {}
     )
 
+    if not isinstance(cart_data, dict):
+
+        cart_data = {}
+
     if not cart_data:
 
         return redirect("cart")
@@ -421,6 +511,10 @@ def checkout(request):
 
     for cart_key, cart_item in cart_data.items():
 
+        if not isinstance(cart_item, dict):
+
+            continue
+
         product_id = cart_item.get(
             "product_id"
         )
@@ -434,21 +528,47 @@ def checkout(request):
             0
         )
 
+        # =================================================
+        # VALIDATE QUANTITY
+        # =================================================
+
+        try:
+
+            quantity = int(
+                quantity
+            )
+
+        except (ValueError, TypeError):
+
+            quantity = 0
+
+        if quantity <= 0:
+
+            continue
+
+        # =================================================
+        # PRODUCT
+        # =================================================
+
         try:
 
             product = Product.objects.get(
                 id=product_id
             )
 
-        except Product.DoesNotExist:
+        except (
+            Product.DoesNotExist,
+            ValueError,
+            TypeError
+        ):
 
             continue
 
-        variant = None
+        # =================================================
+        # VARIANT
+        # =================================================
 
-        # =================================================
-        # VARIANTE
-        # =================================================
+        variant = None
 
         if variant_id:
 
@@ -459,7 +579,11 @@ def checkout(request):
                     product=product
                 )
 
-            except ProductVariant.DoesNotExist:
+            except (
+                ProductVariant.DoesNotExist,
+                ValueError,
+                TypeError
+            ):
 
                 return render(
                     request,
@@ -467,6 +591,10 @@ def checkout(request):
                     {
                         "cart_items": cart_items,
                         "total": total,
+                        "delivery_fee": DELIVERY_FEE,
+                        "total_with_delivery": (
+                            total + DELIVERY_FEE
+                        ),
                         "error": (
                             f"La variante du produit "
                             f"{product.name} "
@@ -474,6 +602,10 @@ def checkout(request):
                         ),
                     }
                 )
+
+            # =============================================
+            # VARIANT STOCK
+            # =============================================
 
             if quantity > variant.quantity:
 
@@ -483,6 +615,10 @@ def checkout(request):
                     {
                         "cart_items": cart_items,
                         "total": total,
+                        "delivery_fee": DELIVERY_FEE,
+                        "total_with_delivery": (
+                            total + DELIVERY_FEE
+                        ),
                         "error": (
                             f"Stock insuffisant pour "
                             f"{product.name} - "
@@ -492,7 +628,7 @@ def checkout(request):
                 )
 
         # =================================================
-        # SANS VARIANTE
+        # PRODUCT STOCK
         # =================================================
 
         else:
@@ -505,12 +641,20 @@ def checkout(request):
                     {
                         "cart_items": cart_items,
                         "total": total,
+                        "delivery_fee": DELIVERY_FEE,
+                        "total_with_delivery": (
+                            total + DELIVERY_FEE
+                        ),
                         "error": (
                             f"Stock insuffisant pour "
                             f"{product.name}."
                         ),
                     }
                 )
+
+        # =================================================
+        # SUBTOTAL
+        # =================================================
 
         subtotal = (
             product.price * quantity
@@ -526,6 +670,14 @@ def checkout(request):
                 "subtotal": subtotal,
             }
         )
+
+    # =====================================================
+    # DELIVERY
+    # =====================================================
+
+    total_with_delivery = (
+        total + DELIVERY_FEE
+    )
 
     # =====================================================
     # POST
@@ -553,6 +705,10 @@ def checkout(request):
             ""
         ).strip()
 
+        # =================================================
+        # VALIDATE CUSTOMER
+        # =================================================
+
         if (
             not customer_name
             or not phone
@@ -566,6 +722,10 @@ def checkout(request):
                 {
                     "cart_items": cart_items,
                     "total": total,
+                    "delivery_fee": DELIVERY_FEE,
+                    "total_with_delivery": (
+                        total_with_delivery
+                    ),
                     "error": (
                         "Veuillez remplir "
                         "tous les champs."
@@ -578,6 +738,10 @@ def checkout(request):
         # =================================================
 
         for cart_key, cart_item in cart_data.items():
+
+            if not isinstance(cart_item, dict):
+
+                continue
 
             product_id = cart_item.get(
                 "product_id"
@@ -594,11 +758,11 @@ def checkout(request):
 
             try:
 
-                product = Product.objects.get(
-                    id=product_id
+                quantity = int(
+                    quantity
                 )
 
-            except Product.DoesNotExist:
+            except (ValueError, TypeError):
 
                 return render(
                     request,
@@ -606,12 +770,52 @@ def checkout(request):
                     {
                         "cart_items": cart_items,
                         "total": total,
+                        "delivery_fee": DELIVERY_FEE,
+                        "total_with_delivery": (
+                            total_with_delivery
+                        ),
+                        "error": (
+                            "Quantité invalide."
+                        ),
+                    }
+                )
+
+            # =============================================
+            # GET PRODUCT
+            # =============================================
+
+            try:
+
+                product = Product.objects.get(
+                    id=product_id
+                )
+
+            except (
+                Product.DoesNotExist,
+                ValueError,
+                TypeError
+            ):
+
+                return render(
+                    request,
+                    "store/checkout.html",
+                    {
+                        "cart_items": cart_items,
+                        "total": total,
+                        "delivery_fee": DELIVERY_FEE,
+                        "total_with_delivery": (
+                            total_with_delivery
+                        ),
                         "error": (
                             "Un produit du panier "
                             "n'existe plus."
                         ),
                     }
                 )
+
+            # =============================================
+            # VARIANT
+            # =============================================
 
             if variant_id:
 
@@ -622,7 +826,11 @@ def checkout(request):
                         product=product
                     )
 
-                except ProductVariant.DoesNotExist:
+                except (
+                    ProductVariant.DoesNotExist,
+                    ValueError,
+                    TypeError
+                ):
 
                     return render(
                         request,
@@ -630,6 +838,10 @@ def checkout(request):
                         {
                             "cart_items": cart_items,
                             "total": total,
+                            "delivery_fee": DELIVERY_FEE,
+                            "total_with_delivery": (
+                                total_with_delivery
+                            ),
                             "error": (
                                 f"La variante de "
                                 f"{product.name} "
@@ -646,6 +858,10 @@ def checkout(request):
                         {
                             "cart_items": cart_items,
                             "total": total,
+                            "delivery_fee": DELIVERY_FEE,
+                            "total_with_delivery": (
+                                total_with_delivery
+                            ),
                             "error": (
                                 f"Stock insuffisant pour "
                                 f"{product.name} - "
@@ -653,6 +869,10 @@ def checkout(request):
                             ),
                         }
                     )
+
+            # =============================================
+            # WITHOUT VARIANT
+            # =============================================
 
             else:
 
@@ -664,6 +884,10 @@ def checkout(request):
                         {
                             "cart_items": cart_items,
                             "total": total,
+                            "delivery_fee": DELIVERY_FEE,
+                            "total_with_delivery": (
+                                total_with_delivery
+                            ),
                             "error": (
                                 f"Stock insuffisant pour "
                                 f"{product.name}."
@@ -691,7 +915,9 @@ def checkout(request):
 
             city=city,
 
-            total=total,
+            # IMPORTANT:
+            # total produits + livraison
+            total=total_with_delivery,
         )
 
         # =================================================
@@ -699,6 +925,10 @@ def checkout(request):
         # =================================================
 
         for cart_key, cart_item in cart_data.items():
+
+            if not isinstance(cart_item, dict):
+
+                continue
 
             product_id = cart_item.get(
                 "product_id"
@@ -726,6 +956,10 @@ def checkout(request):
                     product=product
                 )
 
+            # =================================================
+            # ORDER ITEM
+            # =================================================
+
             OrderItem.objects.create(
 
                 order=order,
@@ -737,10 +971,11 @@ def checkout(request):
                 quantity=quantity,
 
                 price=product.price,
+
             )
 
             # =================================================
-            # VARIANT STOCK
+            # UPDATE VARIANT STOCK
             # =================================================
 
             if variant:
@@ -754,7 +989,7 @@ def checkout(request):
                 )
 
             # =================================================
-            # PRODUCT STOCK
+            # UPDATE PRODUCT STOCK
             # =================================================
 
             else:
@@ -775,6 +1010,10 @@ def checkout(request):
 
         request.session.modified = True
 
+        # =================================================
+        # ORDER SUCCESS
+        # =================================================
+
         return redirect(
             "order_success",
             order_id=order.id
@@ -790,6 +1029,8 @@ def checkout(request):
         {
             "cart_items": cart_items,
             "total": total,
+            "delivery_fee": DELIVERY_FEE,
+            "total_with_delivery": total_with_delivery,
         }
     )
 
@@ -1032,7 +1273,6 @@ def my_orders(request):
 # =========================================================
 
 def creator(request):
-
 
     return render(
         request,

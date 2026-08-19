@@ -14,6 +14,27 @@
             margin: 0;
             padding: 30px;
         }
+        .summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    font-size: 16px;
+    border-bottom: 1px solid #eee;
+}
+
+.summary-row.delivery {
+    color: #555;
+}
+
+.total {
+    display: flex;
+    justify-content: space-between;
+    font-size: 22px;
+    font-weight: bold;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 2px solid #222;
+}
 
         .container {
             max-width: 1000px;
@@ -226,15 +247,23 @@
 
             {% endfor %}
 
-            <div class="total">
+            <div class="summary-row">
+    <span>Sous-total</span>
+    <span>{{ total }} DT</span>
+</div>
 
-                <span>Total</span>
+<div class="summary-row delivery">
+    <span>Livraison</span>
+    <span>8 DT</span>
+</div>
 
-                <span>
-                    {{ total }} DT
-                </span>
+<div class="total">
+    <span>Total à payer</span>
 
-            </div>
+    <span>
+        {{ total_with_delivery }} DT
+    </span>
+</div>
 
         </div>
 
