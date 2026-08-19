@@ -1,3 +1,4 @@
+```html
 {% extends "store/base.html" %}
 
 {% block title %}
@@ -321,10 +322,12 @@
         transition: 0.2s ease;
     }
 
-    .variant-option:hover:not(:disabled) {
+    .variant-option:hover {
         border-color: #2563eb;
 
         background: #eff6ff;
+
+        transform: translateY(-1px);
     }
 
     .variant-option.selected {
@@ -333,18 +336,6 @@
         color: white;
 
         border-color: #2563eb;
-    }
-
-    .variant-option:disabled {
-        cursor: not-allowed;
-
-        background: #f3f4f6;
-
-        color: #9ca3af;
-
-        border-color: #e5e7eb;
-
-        text-decoration: line-through;
     }
 
     .variant-stock-info {
@@ -924,9 +915,7 @@
             <!-- NAME -->
 
             <h1 class="product-name">
-
                 {{ product.name }}
-
             </h1>
 
 
@@ -935,17 +924,13 @@
             {% if product.description %}
 
                 <p class="product-description">
-
                     {{ product.description }}
-
                 </p>
 
             {% else %}
 
                 <p class="product-description">
-
                     Informations produit disponibles prochainement.
-
                 </p>
 
             {% endif %}
@@ -956,15 +941,11 @@
             <div class="product-price">
 
                 <span class="price-number">
-
                     {{ product.price }}
-
                 </span>
 
                 <span class="price-currency">
-
                     DT
-
                 </span>
 
             </div>
@@ -979,11 +960,8 @@
                 <div class="variant-area">
 
                     <label class="variant-label">
-
                         {{ product.variants.all.0.option_name }}
-
                     </label>
-
 
                     <div class="variant-options">
 
@@ -999,21 +977,7 @@
                                     data-value="{{ variant.option_value }}"
                                     onclick="selectVariant(this)"
                                 >
-
                                     {{ variant.option_value }}
-
-                                </button>
-
-                            {% else %}
-
-                                <button
-                                    type="button"
-                                    class="variant-option"
-                                    disabled
-                                >
-
-                                    {{ variant.option_value }}
-
                                 </button>
 
                             {% endif %}
@@ -1022,14 +986,11 @@
 
                     </div>
 
-
                     <div
                         id="variantStockInfo"
                         class="variant-stock-info"
                     >
-
                         Veuillez sélectionner une option.
-
                     </div>
 
                 </div>
@@ -1048,7 +1009,6 @@
             >
 
                 {% csrf_token %}
-
 
                 <!-- Variant ID -->
 
@@ -1096,14 +1056,11 @@
                                 for="quantity"
                                 class="quantity-label"
                             >
-
                                 Quantité souhaitée
-
                             </label>
 
 
                             <div class="purchase-row">
-
 
                                 <div class="quantity-control">
 
@@ -1143,9 +1100,7 @@
                                     type="submit"
                                     class="add-cart-btn"
                                 >
-
                                     🛒 Ajouter au panier
-
                                 </button>
 
 
@@ -1154,9 +1109,7 @@
                                     class="back-products-btn"
                                     title="Retour aux produits"
                                 >
-
                                     ←
-
                                 </a>
 
                             </div>
@@ -1181,9 +1134,7 @@
 
 
                         <div class="unavailable-btn">
-
                             Produit indisponible
-
                         </div>
 
                     {% endif %}
@@ -1227,14 +1178,11 @@
                                 for="quantity"
                                 class="quantity-label"
                             >
-
                                 Quantité souhaitée
-
                             </label>
 
 
                             <div class="purchase-row">
-
 
                                 <div class="quantity-control">
 
@@ -1243,9 +1191,7 @@
                                         class="quantity-btn"
                                         onclick="decreaseQuantity()"
                                     >
-
                                         −
-
                                     </button>
 
 
@@ -1266,9 +1212,7 @@
                                         class="quantity-btn"
                                         onclick="increaseQuantity()"
                                     >
-
                                         +
-
                                     </button>
 
                                 </div>
@@ -1279,9 +1223,7 @@
                                     class="add-cart-btn"
                                     id="addCartButton"
                                 >
-
                                     🛒 Ajouter au panier
-
                                 </button>
 
 
@@ -1290,9 +1232,7 @@
                                     class="back-products-btn"
                                     title="Retour aux produits"
                                 >
-
                                     ←
-
                                 </a>
 
                             </div>
@@ -1306,9 +1246,7 @@
                         id="selectVariantMessage"
                         class="unavailable-btn"
                     >
-
                         Veuillez sélectionner une option
-
                     </div>
 
                 {% endif %}
@@ -1414,15 +1352,14 @@
 
     function selectVariant(button) {
 
-        const variantId =
-            button.dataset.variantId;
+        const variantId = button.dataset.variantId;
 
-        const stock =
-            parseInt(button.dataset.stock);
+        const stock = parseInt(
+            button.dataset.stock,
+            10
+        );
 
-        const value =
-            button.dataset.value;
-
+        const value = button.dataset.value;
 
         selectedVariantStock = stock;
 
@@ -1456,8 +1393,7 @@
 
         if (variantInput) {
 
-            variantInput.value =
-                variantId;
+            variantInput.value = variantId;
 
         }
 
@@ -1506,15 +1442,13 @@
 
         if (purchaseArea) {
 
-            purchaseArea.style.display =
-                "block";
+            purchaseArea.style.display = "block";
 
         }
 
         if (selectMessage) {
 
-            selectMessage.style.display =
-                "none";
+            selectMessage.style.display = "none";
 
         }
 
@@ -1550,8 +1484,7 @@
 
             quantityInput.value = 1;
 
-            quantityInput.max =
-                stock;
+            quantityInput.max = stock;
 
         }
 
@@ -1573,18 +1506,15 @@
             return;
         }
 
-
         const current =
-            parseInt(input.value);
+            parseInt(input.value, 10);
 
         const min =
-            parseInt(input.min);
-
+            parseInt(input.min, 10);
 
         if (current > min) {
 
-            input.value =
-                current - 1;
+            input.value = current - 1;
 
         }
 
@@ -1606,18 +1536,15 @@
             return;
         }
 
-
         const current =
-            parseInt(input.value);
+            parseInt(input.value, 10);
 
         const max =
-            parseInt(input.max);
-
+            parseInt(input.max, 10);
 
         if (current < max) {
 
-            input.value =
-                current + 1;
+            input.value = current + 1;
 
         }
 
@@ -1639,14 +1566,8 @@
             return;
         }
 
+        mainImage.src = image.src;
 
-        mainImage.src =
-            image.src;
-
-
-        /* -----------------------------------------------
-           Active thumbnail
-        ----------------------------------------------- */
 
         document
             .querySelectorAll(".gallery-thumb")
@@ -1657,7 +1578,6 @@
                 );
 
             });
-
 
         image.classList.add(
             "active"
@@ -1689,13 +1609,13 @@
 
 
                 /*
-                 * Si le produit possède des variants,
-                 * vérifier qu'une variante est sélectionnée.
+                 * Vérifier si le produit possède
+                 * des variantes disponibles.
                  */
 
                 const variantButtons =
                     document.querySelectorAll(
-                        ".variant-option:not(:disabled)"
+                        ".variant-option"
                     );
 
 
@@ -1723,3 +1643,4 @@
 </script>
 
 {% endblock %}
+```
