@@ -5,76 +5,445 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Mon panier</title>
+    <title>Panier - Sportifano</title>
 
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f5f7fa;
-            margin: 0;
+        * {
+            box-sizing: border-box;
         }
 
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f6f6f6;
+            color: #222;
+        }
+
+        /* ==============================
+           HEADER
+        ============================== */
+
+        .header {
+            background: #fff;
+            border-bottom: 1px solid #eee;
+            padding: 18px 0;
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 0 20px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-size: 26px;
+            font-weight: 800;
+            color: #ff4d00;
+            text-decoration: none;
+        }
+
+        .secure {
+            font-size: 14px;
+            color: #666;
+        }
+
+        /* ==============================
+           CONTAINER
+        ============================== */
+
         .container {
-            max-width: 1000px;
-            margin: 50px auto;
-            padding: 20px;
+            max-width: 1200px;
+            margin: 35px auto;
+            padding: 0 20px;
+        }
+
+        .back {
+            color: #555;
+            text-decoration: none;
+            font-size: 14px;
+            display: inline-block;
+            margin-bottom: 25px;
+        }
+
+        .back:hover {
+            color: #ff4d00;
         }
 
         h1 {
-            margin-bottom: 30px;
+            font-size: 28px;
+            margin: 0 0 25px;
         }
+
+        /* ==============================
+           LAYOUT
+        ============================== */
+
+        .cart-layout {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 25px;
+            align-items: start;
+        }
+
+        /* ==============================
+           CART CARD
+        ============================== */
+
+        .cart-box {
+            background: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .cart-header {
+            padding: 18px 22px;
+            border-bottom: 1px solid #eee;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        /* ==============================
+           CART ITEM
+        ============================== */
 
         .cart-item {
             display: flex;
             align-items: center;
-            gap: 25px;
-            background: white;
+            gap: 18px;
+
             padding: 20px;
-            margin-bottom: 15px;
-            border-radius: 12px;
+
+            border-bottom: 1px solid #eee;
         }
 
-        .cart-item img {
-            width: 100px;
-            height: 100px;
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+
+        /* ==============================
+           IMAGE
+        ============================== */
+
+        .product-image {
+            width: 115px;
+            height: 115px;
+
+            background: #f7f7f7;
+            border-radius: 8px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
             object-fit: contain;
         }
 
-        .info {
+        /* ==============================
+           INFO
+        ============================== */
+
+        .product-info {
             flex: 1;
+            min-width: 0;
         }
 
-        .price {
-            font-weight: bold;
+        .product-name {
+            font-size: 17px;
+            font-weight: 600;
+            margin: 0 0 10px;
         }
+
+        .variant {
+            display: inline-block;
+
+            background: #f5f5f5;
+            border-radius: 5px;
+
+            padding: 6px 10px;
+
+            font-size: 13px;
+            color: #555;
+
+            margin-bottom: 10px;
+        }
+
+        .unit-price {
+            color: #777;
+            font-size: 14px;
+        }
+
+        /* ==============================
+           QUANTITY
+        ============================== */
+
+        .quantity {
+            font-size: 14px;
+            color: #555;
+            margin-top: 8px;
+        }
+
+        /* ==============================
+           PRICE
+        ============================== */
+
+        .item-price {
+            text-align: right;
+            min-width: 120px;
+        }
+
+        .subtotal {
+            color: #ff4d00;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        /* ==============================
+           REMOVE
+        ============================== */
 
         .remove {
-            color: red;
+            display: block;
+            margin-top: 10px;
+
+            color: #888;
             text-decoration: none;
+
+            font-size: 13px;
         }
 
-        .total {
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
-            text-align: right;
-            font-size: 24px;
-            font-weight: bold;
+        .remove:hover {
+            color: #ff4d00;
+            text-decoration: underline;
         }
 
-        .btn {
-            display: inline-block;
-            background: #198754;
-            color: white;
-            padding: 15px 25px;
-            border-radius: 8px;
+        /* ==============================
+           SUMMARY
+        ============================== */
+
+        .summary {
+            background: #fff;
+            border-radius: 10px;
+            padding: 22px;
+
+            position: sticky;
+            top: 20px;
+        }
+
+        .summary-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 22px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+
+            font-size: 14px;
+            margin-bottom: 15px;
+
+            color: #555;
+        }
+
+        .summary-row.total-row {
+            border-top: 1px solid #eee;
+            padding-top: 18px;
+            margin-top: 18px;
+
+            color: #222;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .total-price {
+            color: #ff4d00;
+            font-size: 25px;
+        }
+
+        /* ==============================
+           CHECKOUT BUTTON
+        ============================== */
+
+        .checkout-btn {
+            display: block;
+
+            width: 100%;
+
+            background: #ff4d00;
+            color: #fff;
+
+            text-align: center;
+
+            padding: 15px 20px;
+
+            border-radius: 7px;
+
             text-decoration: none;
+
+            font-size: 16px;
+            font-weight: 700;
+
             margin-top: 20px;
+
+            transition: 0.2s;
         }
 
-        .back {
-            color: #333;
+        .checkout-btn:hover {
+            background: #e84300;
+        }
+
+        /* ==============================
+           BENEFITS
+        ============================== */
+
+        .benefits {
+            margin-top: 20px;
+            padding-top: 18px;
+
+            border-top: 1px solid #eee;
+        }
+
+        .benefit {
+            display: flex;
+            gap: 10px;
+
+            margin-bottom: 12px;
+
+            font-size: 13px;
+            color: #666;
+        }
+
+        .benefit-icon {
+            font-size: 16px;
+        }
+
+        /* ==============================
+           EMPTY CART
+        ============================== */
+
+        .empty {
+            background: #fff;
+            border-radius: 10px;
+
+            padding: 70px 20px;
+
+            text-align: center;
+        }
+
+        .empty-icon {
+            font-size: 60px;
+            margin-bottom: 15px;
+        }
+
+        .empty h2 {
+            margin-bottom: 10px;
+        }
+
+        .empty p {
+            color: #777;
+            margin-bottom: 25px;
+        }
+
+        .shopping-btn {
+            display: inline-block;
+
+            background: #ff4d00;
+            color: white;
+
+            padding: 13px 28px;
+
+            border-radius: 7px;
+
             text-decoration: none;
+
+            font-weight: 600;
+        }
+
+        /* ==============================
+           RESPONSIVE
+        ============================== */
+
+        @media (max-width: 900px) {
+
+            .cart-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .summary {
+                position: static;
+            }
+        }
+
+        @media (max-width: 600px) {
+
+            .container {
+                margin: 20px auto;
+                padding: 0 12px;
+            }
+
+            .header-container {
+                padding: 0 12px;
+            }
+
+            .logo {
+                font-size: 22px;
+            }
+
+            .secure {
+                font-size: 12px;
+            }
+
+            h1 {
+                font-size: 23px;
+            }
+
+            .cart-item {
+                align-items: flex-start;
+                padding: 15px;
+                gap: 12px;
+            }
+
+            .product-image {
+                width: 85px;
+                height: 85px;
+            }
+
+            .product-name {
+                font-size: 15px;
+            }
+
+            .item-price {
+                min-width: auto;
+            }
+
+            .subtotal {
+                font-size: 17px;
+            }
+
+            .cart-item {
+                flex-wrap: wrap;
+            }
+
+            .item-price {
+                width: 100%;
+                text-align: left;
+                margin-left: 97px;
+            }
+
+            .remove {
+                display: inline-block;
+            }
         }
     </style>
 
@@ -82,82 +451,307 @@
 
 <body>
 
+
+<!-- =====================================
+     HEADER
+===================================== -->
+
+<header class="header">
+
+    <div class="header-container">
+
+        <a
+            href="{% url 'product_list' %}"
+            class="logo"
+        >
+            SPORTIFANO
+        </a>
+
+        <div class="secure">
+            🔒 Paiement sécurisé
+        </div>
+
+    </div>
+
+</header>
+
+
+<!-- =====================================
+     MAIN
+===================================== -->
+
 <div class="container">
 
-    <a href="{% url 'product_list' %}" class="back">
+    <a
+        href="{% url 'product_list' %}"
+        class="back"
+    >
         ← Continuer mes achats
     </a>
 
-    <h1>🛒 Mon panier</h1>
+
+    <h1>
+        🛒 Mon panier
+    </h1>
+
 
     {% if cart_items %}
 
-        {% for item in cart_items %}
 
-            <div class="cart-item">
+        <div class="cart-layout">
 
-                {% if item.product.image %}
 
-                    <img
-                        src="{{ item.product.image.url }}"
-                        alt="{{ item.product.name }}"
-                    >
+            <!-- =================================
+                 PRODUCTS
+            ================================= -->
 
-                {% endif %}
+            <div class="cart-box">
 
-                <div class="info">
+                <div class="cart-header">
 
-                    <h2>
-                        {{ item.product.name }}
-                    </h2>
-
-                    <p>
-                        Prix unitaire :
-                        {{ item.product.price }} DT
-                    </p>
-
-                    <p>
-                        Quantité :
-                        {{ item.quantity }}
-                    </p>
-
-                    <p class="price">
-                        Sous-total :
-                        {{ item.subtotal }} DT
-                    </p>
+                    Votre panier
+                    ({{ cart_items|length }} article{% if cart_items|length > 1 %}s{% endif %})
 
                 </div>
 
-                <a
-                    href="{% url 'remove_from_cart' item.product.id %}"
-                    class="remove"
-                >
-                    Supprimer
-                </a>
+
+                {% for item in cart_items %}
+
+                    <div class="cart-item">
+
+
+                        <!-- IMAGE -->
+
+                        <div class="product-image">
+
+                            {% if item.product.image %}
+
+                                <img
+                                    src="{{ item.product.image.url }}"
+                                    alt="{{ item.product.name }}"
+                                >
+
+                            {% else %}
+
+                                🛍️
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- PRODUCT INFO -->
+
+                        <div class="product-info">
+
+                            <h2 class="product-name">
+
+                                {{ item.product.name }}
+
+                            </h2>
+
+
+                            {% if item.variant %}
+
+                                <div class="variant">
+
+                                    {{ item.variant.option_name }} :
+                                    {{ item.variant.option_value }}
+
+                                </div>
+
+                            {% endif %}
+
+
+                            <div class="unit-price">
+
+                                {{ item.product.price }} DT / unité
+
+                            </div>
+
+
+                            <div class="quantity">
+
+                                Quantité :
+                                <strong>
+                                    {{ item.quantity }}
+                                </strong>
+
+                            </div>
+
+
+                            <a
+                                href="{% url 'remove_from_cart' item.product.id %}"
+                                class="remove"
+                            >
+                                Supprimer
+                            </a>
+
+                        </div>
+
+
+                        <!-- PRICE -->
+
+                        <div class="item-price">
+
+                            <div class="subtotal">
+
+                                {{ item.subtotal }} DT
+
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+                {% endfor %}
 
             </div>
 
-        {% endfor %}
 
-        <div class="total">
+            <!-- =================================
+                 SUMMARY
+            ================================= -->
 
-            Total :
-            {{ total }} DT
+            <div class="summary">
 
-            <br>
-<a href="{% url 'checkout' %}" class="btn">
-    🛒 Passer la commande
-</a>
+                <div class="summary-title">
+
+                    Résumé de la commande
+
+                </div>
+
+
+                <div class="summary-row">
+
+                    <span>
+                        Sous-total
+                    </span>
+
+                    <span>
+                        {{ total }} DT
+                    </span>
+
+                </div>
+
+
+                <div class="summary-row">
+
+                    <span>
+                        Livraison
+                    </span>
+
+                    <span>
+                        Calculée à la commande
+                    </span>
+
+                </div>
+
+
+                <div class="summary-row total-row">
+
+                    <span>
+                        Total
+                    </span>
+
+                    <span class="total-price">
+                        {{ total }} DT
+                    </span>
+
+                </div>
+
+
+                <a
+                    href="{% url 'checkout' %}"
+                    class="checkout-btn"
+                >
+                    🛒 Passer la commande
+                </a>
+
+
+                <!-- BENEFITS -->
+
+                <div class="benefits">
+
+                    <div class="benefit">
+
+                        <span class="benefit-icon">
+                            🔒
+                        </span>
+
+                        <span>
+                            Paiement sécurisé
+                        </span>
+
+                    </div>
+
+
+                    <div class="benefit">
+
+                        <span class="benefit-icon">
+                            🚚
+                        </span>
+
+                        <span>
+                            Livraison rapide
+                        </span>
+
+                    </div>
+
+
+                    <div class="benefit">
+
+                        <span class="benefit-icon">
+                            ✓
+                        </span>
+
+                        <span>
+                            Produits disponibles en stock
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
 
         </div>
 
+
     {% else %}
 
-        <p>
-            Votre panier est vide.
-        </p>
+
+        <!-- =================================
+             EMPTY CART
+        ================================= -->
+
+        <div class="empty">
+
+            <div class="empty-icon">
+                🛒
+            </div>
+
+            <h2>
+                Votre panier est vide
+            </h2>
+
+            <p>
+                Découvrez nos produits et ajoutez vos articles préférés.
+            </p>
+
+            <a
+                href="{% url 'product_list' %}"
+                class="shopping-btn"
+            >
+                Découvrir les produits
+            </a>
+
+        </div>
+
 
     {% endif %}
+
 
 </div>
 
