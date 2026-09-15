@@ -31,7 +31,7 @@ DEBUG = os.environ.get(
 
 
 ALLOWED_HOSTS = [
-    "pharma-store-6zrm.onrender.com",
+    "sportifano.dockhosting.dev",
     "sportifano.com",
     "www.sportifano.com",
     "localhost",
