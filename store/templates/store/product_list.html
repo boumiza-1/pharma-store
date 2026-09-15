@@ -596,35 +596,74 @@
 
 
                     <!-- ACTIONS -->
+<!-- ACTIONS -->
 
-                    <div class="market-action">
+<div class="market-action">
 
-                        <a
-                            href="{% url 'product_detail' product.id %}"
-                            class="view-btn"
-                        >
-                            Voir
-                        </a>
+    <a
+        href="{% url 'product_detail' product.id %}"
+        class="view-btn"
+    >
+        Voir
+    </a>
 
 
-                        {% if product.quantity > 0 %}
+    {% if product.variants.exists %}
 
-                            <a
-                                href="{% url 'add_to_cart' product.id %}"
-                                class="cart-btn-market"
-                            >
-                                🛒 Ajouter
-                            </a>
+        {% if product.variants.all %}
 
-                        {% else %}
+            <a
+                href="{% url 'product_detail' product.id %}"
+                class="cart-btn-market"
+            >
+                📏 Choisir la taille
+            </a>
 
-                            <span class="disabled-btn">
-                                Indisponible
-                            </span>
+        {% endif %}
 
-                        {% endif %}
+    {% else %}
 
-                    </div>
+        {% if product.quantity > 0 %}
+
+            <form
+                method="POST"
+                action="{% url 'add_to_cart' product.id %}"
+                style="margin: 0;"
+            >
+
+                {% csrf_token %}
+
+                <input
+                    type="hidden"
+                    name="quantity"
+                    value="1"
+                >
+
+                <button
+                    type="submit"
+                    class="cart-btn-market"
+                    style="
+                        width: 100%;
+                        border: none;
+                        cursor: pointer;
+                    "
+                >
+                    🛒 Ajouter
+                </button>
+
+            </form>
+
+        {% else %}
+
+            <span class="disabled-btn">
+                Indisponible
+            </span>
+
+        {% endif %}
+
+    {% endif %}
+
+</div>
 
                 </div>
 
