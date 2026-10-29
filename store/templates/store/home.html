@@ -929,6 +929,118 @@ Accueil | Sportifano.com
     }
 }
 
+
+
+/* =========================================================
+   SCROLL PRODUCT SHOWCASE — REAL PRODUCTS FROM THE CATALOG
+========================================================= */
+.scroll-showcase {
+    display: grid;
+    grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
+    gap: 28px;
+    align-items: start;
+    margin: 30px 0 48px;
+}
+.showcase-intro { margin-bottom: 18px; }
+.showcase-kicker {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 7px 12px; border-radius: 999px;
+    color: #1d4ed8; background: #eaf3ff;
+    font-size: 11px; font-weight: 900; letter-spacing: .08em;
+    text-transform: uppercase; margin-bottom: 12px;
+}
+.showcase-intro h2 {
+    color: #101827; font-size: clamp(26px, 3vw, 38px);
+    line-height: 1.08; font-weight: 900; margin-bottom: 10px;
+}
+.showcase-intro p { color: #64748b; line-height: 1.7; font-size: 14px; }
+.showcase-steps { display: flex; flex-direction: column; gap: 12px; }
+.showcase-step {
+    display: grid; grid-template-columns: 74px minmax(0,1fr) 28px;
+    align-items: center; gap: 13px; padding: 12px;
+    border: 1px solid #e5eaf2; background: #fff; border-radius: 16px;
+    cursor: pointer; transition: border-color .25s ease, box-shadow .25s ease, transform .25s ease;
+    min-height: 98px; text-align: left; color: inherit; width: 100%;
+}
+.showcase-step:hover { transform: translateY(-2px); border-color: #93c5fd; }
+.showcase-step.is-active {
+    border-color: #3b82f6; box-shadow: 0 10px 28px rgba(37,99,235,.12);
+    background: linear-gradient(110deg,#fff,#f3f8ff);
+}
+.showcase-step img {
+    width: 74px; height: 74px; object-fit: contain; padding: 5px;
+    border-radius: 11px; background: #f4f7fb;
+}
+.showcase-step-name { color: #182235; font-size: 14px; font-weight: 850; line-height: 1.35; }
+.showcase-step-meta { margin-top: 5px; color: #64748b; font-size: 11px; }
+.showcase-step-number {
+    display: flex; align-items: center; justify-content: center;
+    width: 27px; height: 27px; border-radius: 50%;
+    background: #f1f5f9; color: #64748b; font-size: 11px; font-weight: 900;
+}
+.showcase-step.is-active .showcase-step-number { color: #fff; background: #2563eb; }
+.showcase-stage {
+    position: sticky; top: 100px; min-height: 590px;
+    border-radius: 26px; overflow: hidden;
+    background: radial-gradient(circle at 50% 25%, #fff 0, #f3f8ff 48%, #e5efff 100%);
+    border: 1px solid #e2eaf6;
+    box-shadow: 0 22px 55px rgba(15,23,42,.10);
+    display: flex; flex-direction: column;
+}
+.showcase-stage::before {
+    content: ""; position: absolute; width: 280px; height: 280px;
+    top: 70px; left: 50%; transform: translateX(-50%);
+    border-radius: 50%; background: rgba(59,130,246,.09); filter: blur(2px);
+}
+.showcase-stage-image {
+    position: relative; z-index: 1; height: 350px; padding: 30px;
+    display: flex; align-items: center; justify-content: center;
+}
+.showcase-stage-image img {
+    width: 100%; height: 100%; object-fit: contain;
+    filter: drop-shadow(0 20px 18px rgba(15,23,42,.13));
+    transition: opacity .18s ease, transform .35s ease;
+}
+.showcase-stage-image img.is-changing { opacity: .15; transform: translateY(10px) scale(.97); }
+.showcase-stage-info {
+    position: relative; z-index: 2; margin-top: auto; padding: 25px 30px 28px;
+    background: rgba(255,255,255,.88); backdrop-filter: blur(14px);
+    border-top: 1px solid rgba(219,230,245,.9);
+}
+.showcase-stage-category {
+    color: #2563eb; font-size: 11px; font-weight: 900;
+    text-transform: uppercase; letter-spacing: .1em; margin-bottom: 8px;
+}
+.showcase-stage-info h3 { color: #111827; font-size: clamp(22px,2.3vw,30px); line-height: 1.15; font-weight: 900; margin-bottom: 9px; }
+.showcase-stage-info p { color: #64748b; font-size: 13px; line-height: 1.65; min-height: 42px; }
+.showcase-stage-bottom { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-top: 18px; }
+.showcase-stage-price { color: #111827; font-size: 27px; font-weight: 950; white-space: nowrap; }
+.showcase-stage-price small { color: #64748b; font-size: 12px; font-weight: 800; }
+.showcase-view-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 12px 18px; border-radius: 11px; color: #fff; background: #2563eb;
+    font-size: 13px; font-weight: 900; white-space: nowrap;
+    box-shadow: 0 8px 18px rgba(37,99,235,.2); transition: transform .2s ease, background .2s ease;
+}
+.showcase-view-btn:hover { background: #1d4ed8; transform: translateY(-2px); color: #fff; }
+.showcase-progress { height: 4px; background: #dbeafe; }
+.showcase-progress span { display: block; height: 100%; width: 0; background: #2563eb; transition: width .25s ease; }
+@media (max-width: 900px) {
+    .scroll-showcase { grid-template-columns: 1fr; gap: 18px; }
+    .showcase-stage { grid-row: 1; top: 85px; min-height: 0; z-index: 5; }
+    .showcase-stage-image { height: 290px; }
+    .showcase-stage-info { padding: 20px; }
+    .showcase-step { min-height: 82px; }
+    .showcase-step img { width: 58px; height: 58px; }
+    .showcase-step { grid-template-columns: 58px minmax(0,1fr) 26px; }
+}
+@media (max-width: 480px) {
+    .showcase-stage-image { height: 225px; padding: 20px; }
+    .showcase-stage-bottom { align-items: flex-start; flex-direction: column; }
+    .showcase-view-btn { width: 100%; }
+    .showcase-step-name { font-size: 12px; }
+}
+
 </style>
 
 {% endblock %}
@@ -984,6 +1096,70 @@ Accueil | Sportifano.com
         </div>
 
     </section>
+
+
+
+    <!-- =====================================================
+         INTERACTIVE SCROLL PRODUCT SHOWCASE
+         Each item is read from the real Django product catalogue.
+    ====================================================== -->
+    {% if products %}
+    <section class="scroll-showcase" id="product-showcase" aria-label="Découverte interactive des produits">
+        <div class="showcase-list-column">
+            <div class="showcase-intro">
+                <span class="showcase-kicker">Sportifano · Sélection</span>
+                <h2>Le bon équipement.<br>À chaque mouvement.</h2>
+                <p>Faites défiler la sélection : l’image, le nom, le prix et les détails changent automatiquement selon le produit choisi.</p>
+            </div>
+            <div class="showcase-steps" role="list" aria-label="Choisir un produit">
+                {% for product in products %}
+                <button
+                    type="button"
+                    class="showcase-step{% if forloop.first %} is-active{% endif %}"
+                    role="listitem"
+                    data-showcase-item
+                    data-name="{{ product.name }}"
+                    data-category="{% if product.category %}{{ product.category.name }}{% else %}Sportifano{% endif %}"
+                    data-price="{{ product.price }}"
+                    data-description="{{ product.description|default:'Découvrez ce produit sportif sur Sportifano.'|truncatechars:150 }}"
+                    data-image="{% if product.image %}{{ product.image.url }}{% else %}{% static 'images/sportif.png' %}{% endif %}"
+                    data-url="{% url 'product_detail' product.id %}"
+                    aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}">
+                    {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="" loading="lazy">
+                    {% else %}
+                    <img src="{% static 'images/sportif.png' %}" alt="" loading="lazy">
+                    {% endif %}
+                    <span>
+                        <span class="showcase-step-name">{{ product.name }}</span>
+                        <span class="showcase-step-meta">{% if product.category %}{{ product.category.name }}{% else %}Collection Sport{% endif %} · {{ product.price }} DT</span>
+                    </span>
+                    <span class="showcase-step-number">{{ forloop.counter|stringformat:"02d" }}</span>
+                </button>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="showcase-stage" aria-live="polite">
+            <div class="showcase-progress"><span id="showcaseProgress"></span></div>
+            <div class="showcase-stage-image">
+                <img id="showcaseMainImage"
+                     src="{% if products.0.image %}{{ products.0.image.url }}{% else %}{% static 'images/sportif.png' %}{% endif %}"
+                     alt="{{ products.0.name }}"
+                     loading="eager">
+            </div>
+            <div class="showcase-stage-info">
+                <div class="showcase-stage-category" id="showcaseCategory">{% if products.0.category %}{{ products.0.category.name }}{% else %}Sportifano{% endif %}</div>
+                <h3 id="showcaseName">{{ products.0.name }}</h3>
+                <p id="showcaseDescription">{{ products.0.description|default:"Découvrez ce produit sportif sur Sportifano."|truncatechars:150 }}</p>
+                <div class="showcase-stage-bottom">
+                    <div class="showcase-stage-price"><span id="showcasePrice">{{ products.0.price }}</span> <small>DT</small></div>
+                    <a class="showcase-view-btn" id="showcaseViewButton" href="{% url 'product_detail' products.0.id %}">Découvrir le produit →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+    {% endif %}
 
 
     <!-- =====================================================
@@ -1367,3 +1543,76 @@ Accueil | Sportifano.com
 </div>
 
 {% endblock %}
+
+
+{% block extra_js %}
+<script>
+(function () {
+    const section = document.getElementById("product-showcase");
+    if (!section) return;
+    const items = Array.from(section.querySelectorAll("[data-showcase-item]"));
+    const mainImage = document.getElementById("showcaseMainImage");
+    const category = document.getElementById("showcaseCategory");
+    const name = document.getElementById("showcaseName");
+    const description = document.getElementById("showcaseDescription");
+    const price = document.getElementById("showcasePrice");
+    const viewButton = document.getElementById("showcaseViewButton");
+    const progress = document.getElementById("showcaseProgress");
+    if (!items.length || !mainImage) return;
+
+    let activeIndex = 0;
+    function activate(item, index) {
+        if (!item || index === activeIndex && item.classList.contains("is-active")) return;
+        activeIndex = index;
+        items.forEach(function (entry) {
+            const active = entry === item;
+            entry.classList.toggle("is-active", active);
+            entry.setAttribute("aria-pressed", active ? "true" : "false");
+        });
+        mainImage.classList.add("is-changing");
+        const nextImage = item.dataset.image || mainImage.src;
+        const preload = new Image();
+        preload.onload = function () {
+            mainImage.src = nextImage;
+            mainImage.alt = item.dataset.name || "Produit Sportifano";
+            requestAnimationFrame(function () { mainImage.classList.remove("is-changing"); });
+        };
+        preload.onerror = function () {
+            mainImage.src = nextImage;
+            mainImage.classList.remove("is-changing");
+        };
+        preload.src = nextImage;
+        category.textContent = item.dataset.category || "Sportifano";
+        name.textContent = item.dataset.name || "";
+        description.textContent = item.dataset.description || "Découvrez ce produit sur Sportifano.";
+        price.textContent = item.dataset.price || "";
+        viewButton.href = item.dataset.url || "#";
+        if (progress) progress.style.width = (((index + 1) / items.length) * 100) + "%";
+    }
+
+    items.forEach(function (item, index) {
+        item.addEventListener("click", function () {
+            activate(item, index);
+        });
+    });
+
+    if ("IntersectionObserver" in window) {
+        const observer = new IntersectionObserver(function (entries) {
+            const visible = entries
+                .filter(function (entry) { return entry.isIntersecting; })
+                .sort(function (a, b) {
+                    return Math.abs(a.boundingClientRect.top - window.innerHeight * 0.48)
+                         - Math.abs(b.boundingClientRect.top - window.innerHeight * 0.48);
+                });
+            if (visible.length) {
+                const item = visible[0].target;
+                activate(item, items.indexOf(item));
+            }
+        }, { root: null, rootMargin: "-28% 0px -38% 0px", threshold: 0 });
+        items.forEach(function (item) { observer.observe(item); });
+    }
+    if (items[0]) activate(items[0], 0);
+})();
+</script>
+{% endblock %}
+
