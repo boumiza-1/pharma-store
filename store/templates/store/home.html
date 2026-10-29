@@ -1560,7 +1560,7 @@ Accueil | Sportifano.com
     const progress = document.getElementById("showcaseProgress");
     if (!items.length || !mainImage) return;
 
-    let activeIndex = 0;
+    let activeIndex = -1;
     function activate(item, index) {
         if (!item || index === activeIndex && item.classList.contains("is-active")) return;
         activeIndex = index;
